@@ -13,24 +13,7 @@ namespace Client_Side
     {
 
         #region Data
-
-        //enum Metrics
-        //{
-        //    FullTime,
-        //    RedirectTime,
-        //    CacheTime,
-        //    DNSTime,
-        //    ConnectTime,
-        //    ApplicationTime,
-        //    FromStartToFirstByte,
-        //    FromConnectToFirstByte,
-        //    FromFirstToLastByte,
-        //    ProcessingTime,
-        //    DOMContentLoadTime,
-        //    DOMReadyTime,
-        //    LoadTime
-        //}
-
+        
         enum Metrics
         {
             FullTime,
@@ -86,59 +69,6 @@ namespace Client_Side
                 return ((long)js.ExecuteScript("return window.performance.timing.loadEventEnd") - (long)js.ExecuteScript("return window.performance.timing.domContentLoadedEventEnd")).ToString();
             }
 
-
-            //if (metric == Metrics.FullTime)
-            //{
-            //    return ((long)js.ExecuteScript("return window.performance.timing.loadEventEnd") - (long)js.ExecuteScript("return window.performance.timing.navigationStart")).ToString();
-            //}
-            //if (metric == Metrics.RedirectTime)
-            //{
-            //    return ((long)js.ExecuteScript("return window.performance.timing.redirectEnd") - (long)js.ExecuteScript("return window.performance.timing.redirectStart")).ToString();
-            //}
-            //if (metric == Metrics.CacheTime)
-            //{
-            //    return ((long)js.ExecuteScript("return window.performance.timing.domainLookupStart") - (long)js.ExecuteScript("return window.performance.timing.fetchStart")).ToString();
-            //}
-            //if (metric == Metrics.DNSTime)
-            //{
-            //    return ((long)js.ExecuteScript("return window.performance.timing.domainLookupEnd") - (long)js.ExecuteScript("return window.performance.timing.domainLookupStart")).ToString();
-            //}
-            //if (metric == Metrics.ConnectTime)
-            //{
-            //    return ((long)js.ExecuteScript("return window.performance.timing.connectEnd") - (long)js.ExecuteScript("return window.performance.timing.connectStart")).ToString();
-            //}
-            //if (metric == Metrics.ApplicationTime)
-            //{
-            //    return ((long)js.ExecuteScript("return window.performance.timing.responseEnd") - (long)js.ExecuteScript("return window.performance.timing.connectEnd")).ToString();
-            //}
-            //if (metric == Metrics.FromStartToFirstByte)
-            //{
-            //    return ((long)js.ExecuteScript("return window.performance.timing.responseStart") - (long)js.ExecuteScript("return window.performance.timing.navigationStart")).ToString();
-            //}
-            //if (metric == Metrics.FromConnectToFirstByte)
-            //{
-            //    return ((long)js.ExecuteScript("return window.performance.timing.responseStart") - (long)js.ExecuteScript("return window.performance.timing.requestStart")).ToString();
-            //}
-            //if (metric == Metrics.FromFirstToLastByte)
-            //{
-            //    return ((long)js.ExecuteScript("return window.performance.timing.responseEnd") - (long)js.ExecuteScript("return window.performance.timing.responseStart")).ToString();
-            //}
-            //if (metric == Metrics.ProcessingTime)
-            //{
-            //    return ((long)js.ExecuteScript("return window.performance.timing.domComplete") - (long)js.ExecuteScript("return window.performance.timing.domLoading")).ToString();
-            //}
-            //if (metric == Metrics.DOMContentLoadTime)
-            //{
-            //    return ((long)js.ExecuteScript("return window.performance.timing.domContentLoadedEventEnd") - (long)js.ExecuteScript("return window.performance.timing.domContentLoadedEventStart")).ToString();
-            //}
-            //if (metric == Metrics.DOMReadyTime)
-            //{
-            //    return ((long)js.ExecuteScript("return window.performance.timing.domComplete") - (long)js.ExecuteScript("return window.performance.timing.responseStart")).ToString();
-            //}
-            //if (metric == Metrics.LoadTime)
-            //{
-            //    return ((long)js.ExecuteScript("return window.performance.timing.loadEventEnd") - (long)js.ExecuteScript("return window.performance.timing.loadEventStart")).ToString();
-            //}
             return "";
         }
 
