@@ -37,6 +37,7 @@ namespace Client_Side
 
                                 driver = new ChromeDriver(options);
                                 driver.Manage().Cookies.DeleteAllCookies();
+                                driver.Manage().Window.Maximize();
                                 break;
                             }
                         case "firefox":

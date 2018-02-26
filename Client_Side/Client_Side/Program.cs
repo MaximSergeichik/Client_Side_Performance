@@ -26,12 +26,14 @@ namespace Client_Side
         {
             try
             {
-                string path = args[0];
+                //string path = args[0];
+                string path = @"D:\Perfomance\ClientSide\Client_Side_Performance\Configs\config_C4C.properties";
                 ShowMessage(String.Format("Start work with {0} config file", path));
 
                 try
                 {
-                    string browser = args[1];
+                    string browser = "chrome";
+                    //string browser = args[1];
                     WebDriver.browser = browser;
                 }
                 catch (Exception ex)

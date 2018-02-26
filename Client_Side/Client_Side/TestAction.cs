@@ -63,25 +63,45 @@ namespace Client_Side
                 }
                 else
                 {
-                    TimeSpan ts = new TimeSpan(0, 3, 0);
-                    WebDriverWait wait = new WebDriverWait(driver, ts);
+                    //TimeSpan ts = new TimeSpan(0, 3, 0);
+                    //WebDriverWait wait = new WebDriverWait(driver, ts);
                     switch (type)
                     {
                         case "navigate":
                             {
+                                Boolean fl = true;
                                 DateTime start = DateTime.Now;
                                 driver.Navigate().GoToUrl(value);
-                                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(waitFor)));
+                                while (fl)
+                                {
+                                    try
+                                    {
+                                        driver.FindElement(By.XPath(waitFor));
+                                        fl = false;
+                                    }
+                                    catch (Exception ex) { }
+                                }
+//                                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(waitFor)));
                                 DateTime end = DateTime.Now;
                                 int time = (end-start).Milliseconds;
                                 WriteData.SendData(TestActionHelp.GetWaitTime(driver, name, time));
                                 break;
                             }
                         case "click":
-                            {   
+                            {
+                                Boolean fl = true;
                                 DateTime start = DateTime.Now;
                                 driver.FindElement(By.XPath(value)).Click();
-                                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(waitFor)));
+                                while (fl)
+                                {
+                                    try
+                                    {
+                                        driver.FindElement(By.XPath(waitFor));
+                                        fl = false;
+                                    }
+                                    catch (Exception ex) { }
+                                }
+//                                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(waitFor)));
                                 DateTime end = DateTime.Now;
                                 int time = (end - start).Milliseconds;
                                 if (attribute == "true")
