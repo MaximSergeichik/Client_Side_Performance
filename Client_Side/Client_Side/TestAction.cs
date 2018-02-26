@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace Client_Side
 {
@@ -15,6 +16,7 @@ namespace Client_Side
         public string value { get; set; }
         public string attribute { get; set; }
         public string name { get; set; }
+        public string waitFor { get; set; }
 
         public TestAction() { }
 
@@ -33,28 +35,67 @@ namespace Client_Side
             try
             {
                 IWebDriver driver = WebDriver.Driver;
-                switch (type)
+                if (!useWaiting)
                 {
-                    case "navigate":
-                        {
-                            driver.Navigate().GoToUrl(value);
-                            WriteData.SendData(TestActionHelp.GetTimes(driver, name));
-                            break;
-                        }
-                    case "click":
-                        {
-                            driver.FindElement(By.XPath(value)).Click();
-                            if (attribute == "true")
+                    switch (type)
+                    {
+                        case "navigate":
                             {
+                                driver.Navigate().GoToUrl(value);
                                 WriteData.SendData(TestActionHelp.GetTimes(driver, name));
+                                break;
                             }
-                            break;
-                        }
-                    case "sendKeys":
-                        {
-                            driver.FindElement(By.XPath(value)).SendKeys(attribute);
-                            break;
-                        }
+                        case "click":
+                            {
+                                driver.FindElement(By.XPath(value)).Click();
+                                if (attribute == "true")
+                                {
+                                    WriteData.SendData(TestActionHelp.GetTimes(driver, name));
+                                }
+                                break;
+                            }
+                        case "sendKeys":
+                            {
+                                driver.FindElement(By.XPath(value)).SendKeys(attribute);
+                                break;
+                            }
+                    }
+                }
+                else
+                {
+                    TimeSpan ts = new TimeSpan(0, 3, 0);
+                    WebDriverWait wait = new WebDriverWait(driver, ts);
+                    switch (type)
+                    {
+                        case "navigate":
+                            {
+                                DateTime start = DateTime.Now;
+                                driver.Navigate().GoToUrl(value);
+                                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(waitFor)));
+                                DateTime end = DateTime.Now;
+                                int time = (end-start).Milliseconds;
+                                WriteData.SendData(TestActionHelp.GetWaitTime(driver, name, time));
+                                break;
+                            }
+                        case "click":
+                            {   
+                                DateTime start = DateTime.Now;
+                                driver.FindElement(By.XPath(value)).Click();
+                                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(waitFor)));
+                                DateTime end = DateTime.Now;
+                                int time = (end - start).Milliseconds;
+                                if (attribute == "true")
+                                {
+                                    WriteData.SendData(TestActionHelp.GetWaitTime(driver, name, time));
+                                }
+                                break;
+                            }
+                        case "sendKeys":
+                            {
+                                driver.FindElement(By.XPath(value)).SendKeys(attribute);
+                                break;
+                            }
+                    }
                 }
             }
             catch (Exception ex)

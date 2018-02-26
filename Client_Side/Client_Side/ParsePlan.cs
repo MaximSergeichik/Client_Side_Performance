@@ -31,10 +31,17 @@ namespace Client_Side
                         XmlAttributeCollection attr = node.Attributes;
                         foreach (XmlAttribute a in attr)
                         {
-                            if (a.Name == "name")
-                                o.name = a.Value;
-                            else
-                                o.attribute = a.Value;
+                            switch(a.Name)
+                            {
+                                case "name": { o.name = a.Value; break; }
+                                case "waitFor": { o.waitFor = a.Value; break; }
+                                default: { o.attribute = a.Value; break; }
+                            }
+
+                            //if (a.Name == "name")
+                            //    o.name = a.Value;
+                            //else
+                            //    o.attribute = a.Value;
 
                         }
                     }

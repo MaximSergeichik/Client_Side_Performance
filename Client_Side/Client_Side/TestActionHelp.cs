@@ -92,6 +92,16 @@ namespace Client_Side
             return result;
         }
 
+        public static List<string> GetWaitTime(IWebDriver driver, string Name, int time)
+        {
+            List<string> result = new List<string>();
+
+            string url = HttpUtility.UrlEncode(driver.Url);
+            result.Add(Name + ",metric=PageLoadTime,location=" + location + " value=" + time.ToString() + ",URL=\"" + url + "\" " + Timestamp());
+
+            return result;
+        }
+
         #endregion
 
         #region Properties
