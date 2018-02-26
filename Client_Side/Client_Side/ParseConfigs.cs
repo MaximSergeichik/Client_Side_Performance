@@ -27,6 +27,12 @@ namespace Client_Side
                 }
             }
 
+            if (data.Keys.Contains("UseWaiting"))
+            {
+                Program.ShowMessage("[INFO]\t'UseWaiting' was read successfully\n");
+                TestAction.useWaiting = Convert.ToBoolean(data["UseWaiting"]);
+            }
+
             if (data.Keys.Contains("CheckUrl"))
             {
                 Program.ShowMessage("[INFO]\t'CheckUrl' was read successfully\n");

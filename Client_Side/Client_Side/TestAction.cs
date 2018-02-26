@@ -9,6 +9,8 @@ namespace Client_Side
 {
     class TestAction
     {
+        public static Boolean useWaiting;
+
         public string type { get; set; }
         public string value { get; set; }
         public string attribute { get; set; }
