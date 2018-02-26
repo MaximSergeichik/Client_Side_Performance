@@ -83,30 +83,35 @@ namespace Client_Side
                                 }
 //                                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(waitFor)));
                                 DateTime end = DateTime.Now;
-                                int time = (end-start).Milliseconds;
+                                int time = Convert.ToInt32((end-start).TotalMilliseconds);
                                 WriteData.SendData(TestActionHelp.GetWaitTime(driver, name, time));
                                 break;
                             }
                         case "click":
                             {
-                                Boolean fl = true;
-                                DateTime start = DateTime.Now;
-                                driver.FindElement(By.XPath(value)).Click();
-                                while (fl)
-                                {
-                                    try
-                                    {
-                                        driver.FindElement(By.XPath(waitFor));
-                                        fl = false;
-                                    }
-                                    catch (Exception ex) { }
-                                }
-//                                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(waitFor)));
-                                DateTime end = DateTime.Now;
-                                int time = (end - start).Milliseconds;
                                 if (attribute == "true")
                                 {
+                                    Boolean fl = true;
+                                    DateTime start = DateTime.Now;
+                                    driver.FindElement(By.XPath(value)).Click();
+                                    while (fl)
+                                    {
+                                        try
+                                        {
+                                            driver.FindElement(By.XPath(waitFor));
+                                            fl = false;
+                                        }
+                                        catch (Exception ex) { }
+                                    }
+//                                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(waitFor)));
+                                    DateTime end = DateTime.Now;
+                                    int time = Convert.ToInt32((end - start).TotalMilliseconds);
+                                
                                     WriteData.SendData(TestActionHelp.GetWaitTime(driver, name, time));
+                                }
+                                else
+                                {
+                                    driver.FindElement(By.XPath(value)).Click();
                                 }
                                 break;
                             }
