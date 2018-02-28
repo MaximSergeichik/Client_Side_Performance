@@ -22,13 +22,15 @@ namespace Client_Side
             File.AppendAllText(@"D:/ClientSideLog.txt", s + "\n");
         }
 
-        static int Main(string[] args)
+        static void Main(string[] args)
         {
             try
             {
                 //string path = args[0];
                 string path = @"D:\Perfomance\ClientSide\Client_Side_Performance\Configs\config_C4C.properties";
                 ShowMessage(String.Format("Start work with {0} config file", path));
+
+                
 
                 try
                 {
@@ -40,6 +42,17 @@ namespace Client_Side
                 {
                     ShowMessage(String.Format("Unable to parse browser for work. Please, read help. \nClient_Side.exe --help"));
                 }
+                try
+                {
+                    //string s = args[2];
+                    string s = "true";
+                    TestAction.isDebug = Convert.ToBoolean(s);
+                    if (TestAction.isDebug)
+                    {
+                        ShowMessage(String.Format("Test will be executed with think times"));
+                    }
+                }
+                catch (Exception ex) { }
 
                 if (ParseConfigs.ParseConfigFile(path))
                 {
@@ -81,14 +94,14 @@ namespace Client_Side
                     }
                 }
 
-                return 0;
+                //return 0;
             }
             catch (Exception ex)
             {
                 WebDriver.Driver.Close();
                 Console.WriteLine(ex);
                 Console.WriteLine("[ERROR]\tMiss command line argument with config file path!");
-                return 1;
+                //return 1;
             }
         }
     }

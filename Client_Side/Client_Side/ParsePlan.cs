@@ -35,6 +35,11 @@ namespace Client_Side
                             {
                                 case "name": { o.name = a.Value; break; }
                                 case "waitFor": { o.waitFor = a.Value; break; }
+                                case "className": { o.className = a.Value; break; }
+                                case "title": { o.title = a.Value; break; }
+                                case "text": { o.text = a.Value; break; }
+                                case "measure": { o.measure = a.Value; break; }
+                                case "tag": { o.tag = a.Value; break; }
                                 default: { o.attribute = a.Value; break; }
                             }
 
