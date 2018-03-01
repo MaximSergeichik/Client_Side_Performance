@@ -15,26 +15,92 @@ namespace Client_Side
         public static Boolean useWaiting;
         public static Boolean isDebug;
 
-        public string type { get; set; }
-        public string value { get; set; }
+        public string type { get; set; }        
         public string attribute { get; set; }
         public string name { get; set; }
-        public string waitFor { get; set; }
-        public string className { get; set; }
-        public string title { get; set; }
-        public string text { get; set; }
         public string measure { get; set; }
-        public string tag { get; set; }
+        public string text { get; set; }
+        
+        
+        public string waitForXPath { get; set; }
+        public string waitForClassName {get; set;}
+        public string waitForTitle { get; set; }
+        public string waitForTag { get; set; }
+        public string waitForInTag { get; set; }
+        public string waitForInLabel { get; set; }
+        public string waitForInText { get; set; }
+
+        public string objectXPath { get; set; }
+        public string objectClassName { get; set; }
+        public string objectTitle { get; set; }
+        public string objectTag { get; set; }
+        public string objectInTag { get; set; }
+        public string objectInLabel { get; set; }
+        public string objectInText { get; set; }
 
         public TestAction() { }
+
+        public IWebElement LocateElement(IWebDriver driver, string xPath, string className, string title, string tag, string inTag, string inLabel, string inText)
+        {
+            IWebElement n = null;
+
+            if (tag != null)
+            {
+                if (title != null && inTag == null)
+                {
+                    n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Equals(title)).First();
+                }
+                if (title != null && inTag != null)
+                {
+                    n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Equals(title)).First().FindElement(By.XPath(inTag));
+                }
+                if (inTag != null && inLabel != null)
+                {
+                    List<IWebElement> list = driver.FindElements(By.TagName(tag)).ToList();
+                    foreach(var a in list)
+                    {
+                        try
+                        {
+                            if (a.FindElement(By.TagName("label")).Text.Contains(inLabel))
+                            {
+                                n = a;
+                            }
+                        }
+                        catch (Exception ex)
+                        { }
+                    }
+                    n = n.FindElement(By.XPath(inTag));
+                }
+            }
+            if (className != null)
+            {
+                if (inText != null)
+                {
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.Text.Equals(inText)).First();
+                }
+                if (title != null && inTag == null)
+                {
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Equals(title)).First();
+                }
+                if (title != null && inTag != null)
+                {
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Equals(title)).First().FindElement(By.XPath(inTag));
+                }
+            }
+            if (className == null && tag == null)
+            {
+                n = driver.FindElement(By.XPath(xPath));
+            }
+            return n;
+        }
 
         public void Show()
         {
             switch (type)
             {
-                case "navigate": { Program.ShowMessage(String.Format("Command: {0} URL: {1} Name: {2}", type, value, name)); break; }
-                case "click": { Program.ShowMessage(String.Format("Command: {0} xPath: {1} IsNewPage: {2} Name: {3}", type, value, attribute, name)); break; }
-                case "sendKeys": { Program.ShowMessage(String.Format("Command: {0} xPath: {1} string: {2}", type, value, attribute)); break; }
+                case "navigate": { Program.ShowMessage(String.Format("Command: {0} URL: {1} Name: {2}", type, objectXPath, name)); break; }
+                case "click": { Program.ShowMessage(String.Format("Command: {0} xPath: {1} IsNewPage: {2} Name: {3}", type, objectXPath, attribute, name)); break; }
+                case "sendKeys": { Program.ShowMessage(String.Format("Command: {0} xPath: {1} string: {2}", type, objectXPath, attribute)); break; }
             }
         }
 
@@ -49,13 +115,13 @@ namespace Client_Side
                     {
                         case "navigate":
                             {
-                                driver.Navigate().GoToUrl(value);
+                                driver.Navigate().GoToUrl(objectXPath);
                                 WriteData.SendData(TestActionHelp.GetTimes(driver, name));
                                 break;
                             }
                         case "click":
                             {
-                                driver.FindElement(By.XPath(value)).Click();
+                                driver.FindElement(By.XPath(objectXPath)).Click();
                                 if (measure == "true")
                                 {
                                     WriteData.SendData(TestActionHelp.GetTimes(driver, name));
@@ -64,7 +130,7 @@ namespace Client_Side
                             }
                         case "sendKeys":
                             {
-                                driver.FindElement(By.XPath(value)).SendKeys(attribute);
+                                driver.FindElement(By.XPath(objectXPath)).SendKeys(attribute);
                                 break;
                             }
                     }
@@ -79,7 +145,7 @@ namespace Client_Side
                             {
                                 if (isDebug)
                                 {
-                                    Thread.Sleep(Convert.ToInt32(value));
+                                    Thread.Sleep(Convert.ToInt32(objectXPath));
                                 }
                                 break;
                             }
@@ -87,12 +153,12 @@ namespace Client_Side
                             {
                                 Boolean fl = true;
                                 DateTime start = DateTime.Now;
-                                driver.Navigate().GoToUrl(value);
+                                driver.Navigate().GoToUrl(objectXPath);
                                 while (fl)
                                 {
                                     try
                                     {
-                                        driver.FindElement(By.XPath(waitFor));
+                                        LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText);
                                         fl = false;
                                     }
                                     catch (Exception ex) { }
@@ -105,24 +171,8 @@ namespace Client_Side
                             }
                         case "click":
                             {
-                                IWebElement n;
-                                if (className != null)
-                                {
-                                    List<IWebElement> list = driver.FindElements(By.ClassName(className)).ToList();
-                                    n = list.Where(i => i.Text == text).First();
-                                }
-                                else
-                                {
-                                    if (tag != null)
-                                    {
-                                        List<IWebElement> list = driver.FindElements(By.TagName(tag)).ToList();
-                                        n = list.Where(i => i.GetAttribute("title") == title).First();
-                                    }
-                                    else
-                                    {
-                                        n = driver.FindElement(By.XPath(value));
-                                    }
-                                }
+                                File.WriteAllText(@"D:\Perfomance\ClientSide\Client_Side_Performance\check.txt", driver.PageSource);
+                                IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText);
                                 if (measure == "true")
                                 {
                                     Boolean fl = true;
@@ -132,7 +182,7 @@ namespace Client_Side
                                     {
                                         try
                                         {
-                                            driver.FindElement(By.XPath(waitFor));
+                                            LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText);
                                             fl = false;
                                         }
                                         catch (Exception ex) { }
@@ -152,7 +202,7 @@ namespace Client_Side
                         case "sendKeys":
                             {
                                 Random r = new Random();
-                                IWebElement n;
+                                IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText);
                                 if (text.Contains("randomNumb"))
                                 {
                                     text = text.Replace("randomNumb", r.Next(1000000, 9999999).ToString());
@@ -161,15 +211,7 @@ namespace Client_Side
                                 {
                                     text = text.Replace("randomStr", Path.GetRandomFileName().Replace(".",""));
                                 }
-                                if (className != null)
-                                {
-                                    List<IWebElement> list = driver.FindElements(By.ClassName(className)).ToList();
-                                    n = list.Where(i => i.GetAttribute("title").Equals(title)).First().FindElement(By.TagName("input"));
-                                }
-                                else
-                                {
-                                    n = driver.FindElement(By.XPath(value));
-                                }
+                                
                                 Thread.Sleep(1000);
 
                                 string s = n.GetAttribute("value");

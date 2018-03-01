@@ -25,7 +25,7 @@ namespace Client_Side
                 {
                     TestAction o = new TestAction();
                     o.type = node.Name;
-                    o.value = node.InnerText;
+                    o.objectXPath = node.InnerText;
                     if (node.Attributes != null)
                     {
                         XmlAttributeCollection attr = node.Attributes;
@@ -34,12 +34,21 @@ namespace Client_Side
                             switch(a.Name)
                             {
                                 case "name": { o.name = a.Value; break; }
-                                case "waitFor": { o.waitFor = a.Value; break; }
-                                case "className": { o.className = a.Value; break; }
-                                case "title": { o.title = a.Value; break; }
                                 case "text": { o.text = a.Value; break; }
                                 case "measure": { o.measure = a.Value; break; }
-                                case "tag": { o.tag = a.Value; break; }
+                                case "waitForXPath": { o.waitForXPath = a.Value; break; }
+                                case "waitForClassName": { o.waitForClassName = a.Value; break; }
+                                case "waitForTitle": { o.waitForTitle = a.Value; break; }
+                                case "waitForTag": { o.waitForTag = a.Value; break; }
+                                case "waitForInTag": { o.waitForInTag = a.Value; break; }
+                                case "waitForinLabel": { o.waitForInLabel = a.Value; break; }
+                                case "waitForInText": { o.waitForInText = a.Value; break; }
+                                case "objectClassName": { o.objectClassName = a.Value; break; }
+                                case "objectTitle": { o.objectTitle = a.Value; break; }
+                                case "objectTag": { o.objectTag = a.Value; break; }
+                                case "objectInTag": { o.objectInTag = a.Value; break; }
+                                case "objectInLabel": { o.objectInLabel = a.Value; break; }
+                                case "objectInText": { o.objectInText = a.Value; break; }
                                 default: { o.attribute = a.Value; break; }
                             }
 
