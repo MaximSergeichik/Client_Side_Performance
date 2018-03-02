@@ -43,12 +43,15 @@ namespace Client_Side
                                 case "waitForInTag": { o.waitForInTag = a.Value; break; }
                                 case "waitForinLabel": { o.waitForInLabel = a.Value; break; }
                                 case "waitForInText": { o.waitForInText = a.Value; break; }
+                                case "waitForInValue": { o.waitForInValue = a.Value; break; }
                                 case "objectClassName": { o.objectClassName = a.Value; break; }
                                 case "objectTitle": { o.objectTitle = a.Value; break; }
                                 case "objectTag": { o.objectTag = a.Value; break; }
                                 case "objectInTag": { o.objectInTag = a.Value; break; }
                                 case "objectInLabel": { o.objectInLabel = a.Value; break; }
                                 case "objectInText": { o.objectInText = a.Value; break; }
+                                case "objectInValue": { o.objectInValue = a.Value; break; }
+                                case "sendInLog": { o.sendInLog = a.Value; break; }
                                 default: { o.attribute = a.Value; break; }
                             }
 

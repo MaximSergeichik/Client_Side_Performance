@@ -27,6 +27,12 @@ namespace Client_Side
                 }
             }
 
+
+            if (data.Keys.Contains("User"))
+            {
+                Program.ShowMessage("[INFO]\t'User' was read successfully\n");
+                TestAction.creditianals = data["User"];
+            }
             if (data.Keys.Contains("UseWaiting"))
             {
                 Program.ShowMessage("[INFO]\t'UseWaiting' was read successfully\n");

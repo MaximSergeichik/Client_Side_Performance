@@ -14,6 +14,7 @@ namespace Client_Side
     {
         public static Boolean useWaiting;
         public static Boolean isDebug;
+        public static string creditianals;
 
         public string type { get; set; }        
         public string attribute { get; set; }
@@ -29,6 +30,7 @@ namespace Client_Side
         public string waitForInTag { get; set; }
         public string waitForInLabel { get; set; }
         public string waitForInText { get; set; }
+        public string waitForInValue { get; set; }
 
         public string objectXPath { get; set; }
         public string objectClassName { get; set; }
@@ -37,22 +39,29 @@ namespace Client_Side
         public string objectInTag { get; set; }
         public string objectInLabel { get; set; }
         public string objectInText { get; set; }
+        public string objectInValue { get; set; }
+
+        public string sendInLog { get; set; }
 
         public TestAction() { }
 
-        public IWebElement LocateElement(IWebDriver driver, string xPath, string className, string title, string tag, string inTag, string inLabel, string inText)
+        public IWebElement LocateElement(IWebDriver driver, string xPath, string className, string title, string tag, string inTag, string inLabel, string inText, string inValue)
         {
             IWebElement n = null;
 
             if (tag != null)
             {
+                if (inValue != null)
+                {
+                    n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("value").Contains(inValue)).First();
+                }
                 if (title != null && inTag == null)
                 {
-                    n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Equals(title)).First();
+                    n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Contains(title)).First();
                 }
                 if (title != null && inTag != null)
                 {
-                    n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Equals(title)).First().FindElement(By.XPath(inTag));
+                    n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Contains(title)).First().FindElement(By.XPath(inTag));
                 }
                 if (inTag != null && inLabel != null)
                 {
@@ -71,23 +80,27 @@ namespace Client_Side
                     }
                     n = n.FindElement(By.XPath(inTag));
                 }
+                if (inText != null) 
+                {
+                    n = driver.FindElements(By.TagName(tag)).Where(i => i.Text.Contains(inText)).First();
+                }
             }
             if (className != null)
             {
                 if (inText != null)
                 {
-                    n = driver.FindElements(By.ClassName(className)).Where(i => i.Text.Equals(inText)).First();
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.Text.Contains(inText)).First();
                 }
                 if (title != null && inTag == null)
                 {
-                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Equals(title)).First();
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Contains(title)).First();
                 }
                 if (title != null && inTag != null)
                 {
-                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Equals(title)).First().FindElement(By.XPath(inTag));
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Contains(title)).First().FindElement(By.XPath(inTag));
                 }
             }
-            if (className == null && tag == null)
+            if (xPath!=null && xPath!="1")
             {
                 n = driver.FindElement(By.XPath(xPath));
             }
@@ -154,12 +167,14 @@ namespace Client_Side
                                 Boolean fl = true;
                                 DateTime start = DateTime.Now;
                                 driver.Navigate().GoToUrl(objectXPath);
+                                
                                 while (fl)
                                 {
                                     try
                                     {
-                                        LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText);
+                                        LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue);
                                         fl = false;
+                                        Console.WriteLine(DateTime.Now);
                                     }
                                     catch (Exception ex) { }
                                 }
@@ -172,7 +187,7 @@ namespace Client_Side
                         case "click":
                             {
                                 File.WriteAllText(@"D:\Perfomance\ClientSide\Client_Side_Performance\check.txt", driver.PageSource);
-                                IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText);
+                                IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue);
                                 if (measure == "true")
                                 {
                                     Boolean fl = true;
@@ -182,7 +197,7 @@ namespace Client_Side
                                     {
                                         try
                                         {
-                                            LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText);
+                                            LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue);
                                             fl = false;
                                         }
                                         catch (Exception ex) { }
@@ -195,14 +210,28 @@ namespace Client_Side
                                 }
                                 else
                                 {
-                                    n.Click(); 
+                                    Boolean fl = true;
+                                    n.Click();
+                                    while (fl)
+                                    {
+                                        try
+                                        {
+                                            LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue);
+                                            fl = false;
+                                        }
+                                        catch (Exception ex) { }
+                                    }
+                                    if (sendInLog!=null)
+                                    {
+                                        Program.WriteLog("[CHANGED] " + driver.FindElements(By.TagName("span")).Where(i => i.Text.Equals(i.GetAttribute("title"))).First().Text);
+                                    }
                                 }
                                 break;
                             }
                         case "sendKeys":
                             {
                                 Random r = new Random();
-                                IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText);
+                                IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue);
                                 if (text.Contains("randomNumb"))
                                 {
                                     text = text.Replace("randomNumb", r.Next(1000000, 9999999).ToString());
@@ -210,6 +239,10 @@ namespace Client_Side
                                 if (text.Contains("randomStr"))
                                 {
                                     text = text.Replace("randomStr", Path.GetRandomFileName().Replace(".",""));
+                                }
+                                if (text.Contains("date"))
+                                {
+                                    text = text.Replace("date", DateTime.Now.ToString("yyyyMMddHHmmss"));
                                 }
                                 
                                 Thread.Sleep(1000);
