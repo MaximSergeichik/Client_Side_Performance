@@ -22,6 +22,8 @@ namespace Client_Side
             File.AppendAllText(@"D:/ClientSideLog.txt", s + "\n");
         }
 
+        public static int numb;
+
         static void Main(string[] args)
         {
             try
@@ -29,6 +31,7 @@ namespace Client_Side
                 //string path = args[0];
                 string path = @"D:\Perfomance\ClientSide\Client_Side_Performance\Configs\config_C4C.properties";
                 ShowMessage(String.Format("Start work with {0} config file", path));
+
 
                 
 
@@ -53,6 +56,8 @@ namespace Client_Side
                     }
                 }
                 catch (Exception ex) { }
+
+                Program.numb = 0;
 
                 if (ParseConfigs.ParseConfigFile(path))
                 {

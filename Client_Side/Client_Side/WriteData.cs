@@ -24,6 +24,8 @@ namespace Client_Side
 
         private static bool IsFile = false;
 
+        private static string FilePath;
+
 
         #endregion
 
@@ -61,6 +63,8 @@ namespace Client_Side
             string time = String.Format("{0:yyyyddMM_HHmmss}", DateTime.Now).ToString();
             string path = PathToFile + time + ".txt";
             fs = File.Create(path);
+            fs.Close();
+            FilePath = path;
             IsFile = true;
         }
 
@@ -78,7 +82,7 @@ namespace Client_Side
 
         private static void WriteDataInFile(List<string> data)
         {
-            data.ForEach(i => { byte[] ar = new UTF8Encoding(true).GetBytes(i + "\n"); fs.Write(ar, 0, ar.Length); });
+            File.AppendAllLines(FilePath, data);
         }
 
         #endregion
