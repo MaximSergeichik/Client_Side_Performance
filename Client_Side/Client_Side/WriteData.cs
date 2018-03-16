@@ -117,7 +117,7 @@ namespace Client_Side
         {
             set
             {
-                if (Directory.Exists(value))
+                if (Directory.Exists(value) || Directory.GetCurrentDirectory().Contains(value))
                 {
                     PathToFile = value;
                 }

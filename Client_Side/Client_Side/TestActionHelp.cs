@@ -97,7 +97,7 @@ namespace Client_Side
             List<string> result = new List<string>();
 
             string url = HttpUtility.UrlEncode(driver.Url);
-            result.Add(Name + ",metric=PageLoadTime,location=" + location + " value=" + time.ToString() + ",URL=\"" + url + "\" " + Timestamp());
+            result.Add("Client,transaction="+Name + ",metric=PageLoadTime,location=" + location + " value=" + time.ToString() + ",URL=\"" + url + "\" " + Timestamp());
 
             return result;
         }

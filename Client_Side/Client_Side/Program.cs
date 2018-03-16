@@ -25,8 +25,9 @@ namespace Client_Side
 
         public static int numb;
 
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
+            bool flag = true;
             try
             {
                 string path = args[0];
@@ -40,6 +41,7 @@ namespace Client_Side
                 }
                 catch(Exception ex)
                 {
+                    flag = false;
                     ShowMessage(String.Format("Unable to parse folder for logs. Please, read help. \nClient_Side.exe --help"));
                 }
                 
@@ -53,6 +55,7 @@ namespace Client_Side
                 catch (Exception ex)
                 {
                     ShowMessage(String.Format("Unable to parse browser for work. Please, read help. \nClient_Side.exe --help"));
+                    flag = false;
                 }
                 try
                 {
@@ -68,15 +71,15 @@ namespace Client_Side
 
                 Program.numb = 0;
 
-                if (ParseConfigs.ParseConfigFile(path))
+                if (ParseConfigs.ParseConfigFile(path) && flag)
                 {
                     List<TestAction> plan = ParsePlan.Plan();
                     Console.WriteLine("Test Plan Parsed");
                     //plan.ForEach(i => i.Show());
                     //Console.WriteLine("!!!!TestPlan End!!!!");
                     int count = 0;
-                    bool flag = true;
-                    while (flag)
+                    bool fl = true;
+                    while (fl)
                     {
                         count++;
                         Program.ShowMessage(count.ToString());
@@ -95,27 +98,27 @@ namespace Client_Side
                             DateTime now = DateTime.Now;
                             if (end < now)
                             {
-                                flag = false;
+                                fl = false;
                             }
                         }
                         else
                         {
                             if (count == TestActionHelp.GetIteration)
                             {
-                                flag = false;
+                                fl = false;
                             }
                         }
                     }
                 }
-
-                //return 0;
+                ShowMessage("Test was ended.");
+                return 0;
             }
             catch (Exception ex)
             {
                 WebDriver.Driver.Close();
                 Console.WriteLine(ex);
                 Console.WriteLine("[ERROR]\tMiss command line argument with config file path!");
-                //return 1;
+                return 1;
             }
         }
     }
