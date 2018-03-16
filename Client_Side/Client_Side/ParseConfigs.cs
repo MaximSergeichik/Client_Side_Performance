@@ -100,24 +100,6 @@ namespace Client_Side
                 WriteData.SetWriteMode = "0";
                 Program.ShowMessage("[INFO]\t'WriteMode' parameter was set to default value = 0\n");
             }
-            if (data.Keys.Contains("OutputFolderPath"))
-            {
-                if ((data["OutputFolderPath"].Last() == '\\') || (data["OutputFolderPath"].Last() == '/'))
-                {
-                    WriteData.SetPathToFile = data["OutputFolderPath"];
-                    Program.ShowMessage("[INFO]\t'OutputFolderPath' was read successfully\n");
-                }
-                else
-                {
-                    Program.ShowMessage("[ERROR]\t'OutputFolderPath' parameter should ends by backslash (\\)!!!");
-                    return false;
-                }
-            }
-            else
-            {
-                WriteData.SetPathToFile = Directory.GetCurrentDirectory();
-                Program.ShowMessage("[INFO]\t'OutputFolderPath' was set to default value = " + Directory.GetCurrentDirectory() + "\n");
-            }
 
             try
             {

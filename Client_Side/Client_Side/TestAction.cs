@@ -221,7 +221,7 @@ namespace Client_Side
                             }
                         case "click":
                             {
-                                File.WriteAllText(@"D:\Perfomance\ClientSide\Client_Side_Performance\check.txt", driver.PageSource);
+                                //File.WriteAllText(@"D:\Perfomance\ClientSide\Client_Side_Performance\check.txt", driver.PageSource);
                                 IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
                                 if (measure == "true")
                                 {

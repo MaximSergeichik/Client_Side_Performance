@@ -117,7 +117,23 @@ namespace Client_Side
         {
             set
             {
-                PathToFile = value;
+                if (Directory.Exists(value))
+                {
+                    PathToFile = value;
+                }
+                else
+                {
+                    Directory.CreateDirectory(value);
+                    PathToFile = value;
+                }
+            }
+        }
+
+        public static string GetPathToFile
+        {
+            get
+            {
+                return PathToFile;
             }
         }
 

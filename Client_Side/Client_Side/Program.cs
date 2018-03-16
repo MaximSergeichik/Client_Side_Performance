@@ -19,7 +19,8 @@ namespace Client_Side
 
         public static void WriteLog(string s)
         {
-            File.AppendAllText(@"D:/ClientSideLog.txt", s + "\n");
+            string path = WriteData.GetPathToFile;
+            File.AppendAllText(path+"/ClientSideLog.txt", s + "\n");
         }
 
         public static int numb;
@@ -28,17 +29,25 @@ namespace Client_Side
         {
             try
             {
-                //string path = args[0];
-                string path = @"D:\Perfomance\ClientSide\Client_Side_Performance\Configs\config_C4C.properties";
+                string path = args[0];
+                //string path = @"D:\Perfomance\ClientSide\Client_Side_Performance\Configs\config_C4C.properties";
                 ShowMessage(String.Format("Start work with {0} config file", path));
 
-
+                try
+                {
+                    string PathToLogs = args[2];
+                    WriteData.SetPathToFile = PathToLogs;
+                }
+                catch(Exception ex)
+                {
+                    ShowMessage(String.Format("Unable to parse folder for logs. Please, read help. \nClient_Side.exe --help"));
+                }
                 
 
                 try
                 {
-                    string browser = "chrome";
-                    //string browser = args[1];
+                    //string browser = "chrome";
+                    string browser = args[1];
                     WebDriver.browser = browser;
                 }
                 catch (Exception ex)
@@ -62,9 +71,9 @@ namespace Client_Side
                 if (ParseConfigs.ParseConfigFile(path))
                 {
                     List<TestAction> plan = ParsePlan.Plan();
-                    Console.WriteLine("!!!TestPlan Start!!!");
-                    plan.ForEach(i => i.Show());
-                    Console.WriteLine("!!!!TestPlan End!!!!");
+                    Console.WriteLine("Test Plan Parsed");
+                    //plan.ForEach(i => i.Show());
+                    //Console.WriteLine("!!!!TestPlan End!!!!");
                     int count = 0;
                     bool flag = true;
                     while (flag)
