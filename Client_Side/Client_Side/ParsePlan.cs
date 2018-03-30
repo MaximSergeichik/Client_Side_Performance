@@ -12,7 +12,7 @@ namespace Client_Side
     {
 
         private static string PathToPlan;
-        private static List<TestAction> list = new List<TestAction>();
+        private static List<TestAction> list1 = new List<TestAction>();
 
         static TestAction ReadNode(XmlNode node)
         {
@@ -50,6 +50,7 @@ namespace Client_Side
                         case "objectXPath": { o.objectXPath = a.Value; break; }
                         case "sendInLog": { o.sendInLog = a.Value; break; }
                         case "value": { o.value = a.Value; break; }
+                        case "iterations": { o.iterations = a.Value; break; }
                         default: { o.attribute = a.Value; break; }
                     }
                 }
@@ -58,28 +59,33 @@ namespace Client_Side
             return o;
         }
 
-        static void ReadNodes(XmlNodeList nodes)
+        static List<TestAction> ReadNodes(XmlNodeList nodes)
         {
+            List<TestAction> list = new List<TestAction>();
             foreach (XmlNode node in nodes)
             {
                 if (node.Name == "Test")
                 {
-                    ReadNodes(node.ChildNodes);
+                    list = ReadNodes(node.ChildNodes);
                 }
                 if (node.Name == "if")
                 {
                     TestAction o = ReadNode(node);
-                    foreach (XmlNode n in node.ChildNodes)
-                    {
-                        o.innerActions.Add(ReadNode(n));
-                    }
+                    o.innerActions = ReadNodes(node.ChildNodes);
                     list.Add(o);
                 }
-                else if (node.Name != "xml")
+                if (node.Name == "for")
+                {
+                    TestAction o = ReadNode(node);
+                    o.innerActions = ReadNodes(node.ChildNodes);
+                    list.Add(o);
+                }
+                else if (node.Name != "xml" && node.Name != "Test")
                 {
                     list.Add(ReadNode(node));
                 }
             }
+            return list;
         }
 
         public static List<TestAction> Plan()
@@ -88,9 +94,9 @@ namespace Client_Side
             XmlDocument doc = new XmlDocument();
             doc.Load(PathToPlan);
             XmlNodeList nodes = doc.ChildNodes;
-            ReadNodes(nodes);
+            list1 = ReadNodes(nodes);
 
-            return list;
+            return list1;
         }
 
         public static string SetPathToPlan

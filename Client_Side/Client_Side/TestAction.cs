@@ -27,7 +27,8 @@ namespace Client_Side
         public string name { get; set; }
         public string measure { get; set; }
         public string text { get; set; }
-        public string value { get; set; } 
+        public string value { get; set; }
+        public string iterations { get; set; }
         
         
         public string waitForXPath { get; set; }
@@ -62,7 +63,25 @@ namespace Client_Side
             {
                 if (id != null)
                 {
-                    n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("id").Contains(id)).First();
+                    if (inText == null && inTag == null)
+                    {
+                        n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("id").Contains(id)).First();
+                    }
+                    if (inTag != null && inText != null)
+                    {
+                        if (inText.Contains("match"))
+                        {
+                            string pattern = inText.Split('|').ToArray()[1];
+                            Regex r = new Regex(pattern);
+                            n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("id").Contains(id)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => r.IsMatch(j.Text)) != null).First();
+                            inText = null;
+                        }
+                        else
+                        {
+                            n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("id").Contains(id)).First().FindElements(By.XPath(inTag)).Where(j => j.Text.Contains(inText)).First();
+                            inText = null;
+                        }
+                    }
                 }
                 if (inValue != null)
                 {
@@ -95,13 +114,16 @@ namespace Client_Side
                 }
                 if (inText != null) 
                 {
-                    if (inText != "match")
+                    if (!inText.Contains("match"))
                     {
                         n = driver.FindElements(By.TagName(tag)).Where(i => i.Text.Contains(inText)).First();
                     }
                     else
                     {
-                        Regex r = new Regex("^[\\d]{5}");
+                        string pattern = inText.Split('|').ToArray()[1];
+                        Regex r = new Regex(pattern);
+
+                        File.WriteAllLines(@"D:/client_side", driver.FindElements(By.TagName(tag)).Select(i => i.Text));
 
                         n = driver.FindElements(By.TagName(tag)).Where(i => r.IsMatch(i.Text)).First();
                     }
@@ -183,14 +205,59 @@ namespace Client_Side
                         case "refresh":
                             {
                                 driver.Navigate().Refresh();
+                                bool fl = true;
+                                while (fl)
+                                {
+                                    try
+                                    {
+                                        LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
+                                        fl = false;
+                                        //Console.WriteLine(DateTime.Now);
+                                    }
+                                    catch (Exception ex) { }
+                                }
+                                break;
+                            }
+                        case "wait":
+                            {
+                                bool fl = true;
+                                while (fl)
+                                {
+                                    try
+                                    {
+                                        LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
+                                        fl = false;
+                                        //Console.WriteLine(DateTime.Now);
+                                    }
+                                    catch (Exception ex) { }
+                                }
+                                break;
+                            }
+                        case "for":
+                            {
+                                int count = Int32.Parse(iterations);
+                                for (int i=0;i<count;i++)
+                                {
+                                    innerActions.ForEach(k => k.Perform());
+                                }
                                 break;
                             }
                         case "if":
                             {
                                 IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
-                                if (n.GetAttribute("value").Equals(value))
+                                if (value != null)
                                 {
-                                    innerActions.ForEach(i => i.Perform());
+                                    if (n.GetAttribute("value").Equals(value))
+                                    {
+                                        innerActions.ForEach(i => i.Perform());
+                                    }
+                                }
+                                if (text != null)
+                                {
+                                    if (n.Text.Contains(text))
+                                    {
+                                        innerActions.ForEach(i => i.Perform());
+                                    }
                                 }
                                 break;
                             }

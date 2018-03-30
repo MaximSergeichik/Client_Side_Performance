@@ -30,13 +30,14 @@ namespace Client_Side
             bool flag = true;
             try
             {
-                string path = args[0];
-                //string path = @"D:\Perfomance\ClientSide\Client_Side_Performance\Configs\config_C4C.properties";
+                //string path = args[0];
+                string path = @"D:\Perfomance\ClientSide\Client_Side_Performance\Configs\config_C4C.properties";
                 ShowMessage(String.Format("Start work with {0} config file", path));
 
                 try
                 {
-                    string PathToLogs = args[2];
+                    //string PathToLogs = args[2];
+                    string PathToLogs = @"D:\Perfomance\ClientSide\Client_Side_Performance\Results\";
                     WriteData.SetPathToFile = PathToLogs;
                 }
                 catch(Exception ex)
@@ -48,8 +49,8 @@ namespace Client_Side
 
                 try
                 {
-                    //string browser = "chrome";
-                    string browser = args[1];
+                    string browser = "chrome";
+                    //string browser = args[1];
                     WebDriver.browser = browser;
                 }
                 catch (Exception ex)
