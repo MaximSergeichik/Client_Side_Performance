@@ -101,7 +101,7 @@ namespace Client_Side
                     }
                     else
                     {
-                        Regex r = new Regex("^[\\d]{4}");
+                        Regex r = new Regex("^[\\d]{5}");
 
                         n = driver.FindElements(By.TagName(tag)).Where(i => r.IsMatch(i.Text)).First();
                     }
@@ -180,6 +180,11 @@ namespace Client_Side
                     //WebDriverWait wait = new WebDriverWait(driver, ts);
                     switch (type)
                     {
+                        case "refresh":
+                            {
+                                driver.Navigate().Refresh();
+                                break;
+                            }
                         case "if":
                             {
                                 IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
@@ -229,7 +234,7 @@ namespace Client_Side
                                     int time1 = 0;                                    
 
 
-                                    if (!name.Equals("Logon") && !name.Equals("LogOff") && !name.Contains("StoreStockLookup"))
+                                    if (!name.Contains("Logon") && !name.Contains("LogOff") && !name.Contains("StoreStockLookup"))
                                     {
                                         n.Click();
                                         while (fl)
@@ -241,7 +246,7 @@ namespace Client_Side
                                             }
                                             catch (Exception ex) { }
                                         }
-                                        Thread.Sleep(2000);
+                                        Thread.Sleep(5000);
                                         Boolean f = true;
                                         while (f)
                                         {
@@ -264,11 +269,11 @@ namespace Client_Side
                                         DateTime start = DateTime.Now;
                                         n.Click();
                                         Boolean f = true;
-                                        if (name.Equals("Logon"))
+                                        if (name.Contains("Logon"))
                                         {
                                             while (f)
                                             {
-                                                if (driver.PageSource.Contains("Performance Statistics"))
+                                                if (driver.PageSource.Contains("Performance Statistics") && driver.PageSource.Contains("ui-step-type\":\"Logon"))
                                                 {
                                                     f = false;
                                                     Regex r = new Regex("end-to-end-time\":\"(.*?)s\"");
@@ -290,9 +295,9 @@ namespace Client_Side
                                         DateTime end = DateTime.Now;
                                         int time = Convert.ToInt32((end - start).TotalMilliseconds) - time1;
 
-                                        if (name.Equals("Logon"))
+                                        if (name.Contains("Logon"))
                                         {
-                                            WriteData.SendData(TestActionHelp.GetWaitTime(driver, "CallPad", time));
+                                            //WriteData.SendData(TestActionHelp.GetWaitTime(driver, "CallPad", time));
                                             WriteData.SendData(TestActionHelp.GetWaitTime(driver, "Logon", time1));
                                         }
                                         else

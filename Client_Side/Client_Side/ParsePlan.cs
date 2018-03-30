@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.IO;
 
 namespace Client_Side
 {
@@ -83,6 +84,7 @@ namespace Client_Side
 
         public static List<TestAction> Plan()
         {
+            WriteData.plan = Path.GetFileNameWithoutExtension(PathToPlan);
             XmlDocument doc = new XmlDocument();
             doc.Load(PathToPlan);
             XmlNodeList nodes = doc.ChildNodes;

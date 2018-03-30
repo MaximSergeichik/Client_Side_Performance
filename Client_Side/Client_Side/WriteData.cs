@@ -26,6 +26,8 @@ namespace Client_Side
 
         private static string FilePath;
 
+        public static string plan;
+
 
         #endregion
 
@@ -60,7 +62,7 @@ namespace Client_Side
 
         private static void CreateResultFile()
         {
-            string time = String.Format("{0:yyyyddMM_HHmmss}", DateTime.Now).ToString();
+            string time = String.Format("{0:yyyyddMM_HHmmss}_{1}", DateTime.Now, plan).ToString();
             string path = PathToFile + time + ".txt";
             fs = File.Create(path);
             fs.Close();
