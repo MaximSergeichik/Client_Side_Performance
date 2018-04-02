@@ -123,14 +123,23 @@ namespace Client_Side
                         string pattern = inText.Split('|').ToArray()[1];
                         Regex r = new Regex(pattern);
 
-                        File.WriteAllLines(@"D:/client_side", driver.FindElements(By.TagName(tag)).Select(i => i.Text));
-
                         n = driver.FindElements(By.TagName(tag)).Where(i => r.IsMatch(i.Text)).First();
                     }
                 }
             }
             if (className != null)
             {
+                if (inTag != null && inText != null)
+                {
+                    if (inText.Contains("match"))
+                    {
+                        string pattern = inText.Split('|').ToArray()[1];
+                        Regex r = new Regex(pattern);
+
+                        n = driver.FindElements(By.TagName(className)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => r.IsMatch(j.Text)) != null).First();
+                    }
+                    goto m;
+                }
                 if (inText != null)
                 {
                     n = driver.FindElements(By.ClassName(className)).Where(i => i.Text.Contains(inText)).First();
@@ -152,6 +161,7 @@ namespace Client_Side
             {
                 n = driver.FindElement(By.XPath(xPath));
             }
+            m:
             return n;
         }
 
@@ -358,13 +368,12 @@ namespace Client_Side
                                             }
                                             catch (Exception ex) { }
                                         }
-                                        //                                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(waitFor)));
+
                                         DateTime end = DateTime.Now;
                                         int time = Convert.ToInt32((end - start).TotalMilliseconds) - time1;
 
                                         if (name.Contains("Logon"))
                                         {
-                                            //WriteData.SendData(TestActionHelp.GetWaitTime(driver, "CallPad", time));
                                             WriteData.SendData(TestActionHelp.GetWaitTime(driver, "Logon", time1));
                                         }
                                         else

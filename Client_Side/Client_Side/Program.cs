@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.IO;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium;
@@ -12,6 +13,8 @@ namespace Client_Side
 {
     class Program
     {
+        static int all_count;
+
         public static void ShowMessage(string s)
         {
             Console.WriteLine(s);
@@ -23,10 +26,28 @@ namespace Client_Side
             File.AppendAllText(path+"/ClientSideLog.txt", s + "\n");
         }
 
+        public static void RunTest(List<TestAction> plan)
+        {
+            try
+            {
+                Start:
+                plan.ForEach(j => j.Perform());
+                all_count += 1;
+                File.WriteAllText(Directory.GetCurrentDirectory() + "/temp", all_count.ToString());
+                goto Start;
+            }
+            catch(ThreadAbortException ex)
+            {
+                WebDriver.Close();
+                File.Delete(Directory.GetCurrentDirectory() + "/temp");
+            }
+        }
+        
         public static int numb;
 
         static int Main(string[] args)
         {
+            all_count = 0;
             bool flag = true;
             try
             {
@@ -76,40 +97,41 @@ namespace Client_Side
                 {
                     List<TestAction> plan = ParsePlan.Plan();
                     Console.WriteLine("Test Plan Parsed");
-                    //plan.ForEach(i => i.Show());
-                    //Console.WriteLine("!!!!TestPlan End!!!!");
-                    int count = 0;
-                    bool fl = true;
-                    while (fl)
+
+
+                    try
                     {
-                        count++;
-                        Program.ShowMessage(count.ToString());
-                        try
-                        {
-                            plan.ForEach(j => j.Perform());
-                        }
-                        catch (Exception ex)
-                        {
-                            Program.WriteLog(ex.Message);
-                        }
-                        WebDriver.Close();
+                        File.Delete(Directory.GetCurrentDirectory() + "/temp");
+                    }
+                    catch (Exception ex) { }
+
+                    Thread th = new Thread(() => RunTest(plan));
+                    th.Name = "TestThread";
+                    th.Start();
+
+                    while (th.ThreadState != ThreadState.Aborted)
+                    {
                         if (TestActionHelp.GetDur)
                         {
-                            DateTime end = TestActionHelp.GetEndTime;
-                            DateTime now = DateTime.Now;
-                            if (end < now)
+                            if (DateTime.Now >= TestActionHelp.GetEndTime)
                             {
-                                fl = false;
+                                th.Abort();
                             }
                         }
                         else
                         {
-                            if (count == TestActionHelp.GetIteration)
+                            try
                             {
-                                fl = false;
+                                if (Int32.Parse(File.ReadAllText(Directory.GetCurrentDirectory() + "/temp")) >= TestActionHelp.GetIteration)
+                                {
+                                    th.Abort();
+                                }
                             }
+                            catch (Exception ex)
+                            { }
                         }
                     }
+
                 }
                 ShowMessage("Test was ended.");
                 return 0;
