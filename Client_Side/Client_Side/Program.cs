@@ -134,6 +134,7 @@ namespace Client_Side
 
                 }
                 ShowMessage("Test was ended.");
+                Console.ReadKey();
                 return 0;
             }
             catch (Exception ex)

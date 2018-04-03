@@ -89,7 +89,17 @@ namespace Client_Side
                 }
                 if (title != null && inTag == null)
                 {
-                    n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Contains(title)).First();
+                    if (title.Contains("match"))
+                    {
+                        string pattern = title.Split('|').ToArray()[1];
+                        Regex r = new Regex(pattern);
+
+                        n = driver.FindElements(By.TagName(tag)).Where(i => r.IsMatch(i.GetAttribute("title"))).First();
+                    }
+                    else
+                    {
+                        n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Contains(title)).First();
+                    }
                 }
                 if (title != null && inTag != null)
                 {
@@ -129,6 +139,26 @@ namespace Client_Side
             }
             if (className != null)
             {
+                if (inText != null && inTag == null)
+                {
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.Text.Contains(inText)).First();
+                    goto m;
+                }
+                if(inTag != null && title == null)
+                {
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.FindElements(By.XPath(inTag)).Count > 0).First().FindElement(By.XPath(inTag));
+                    goto m;
+                }
+                if (title != null && inTag == null)
+                {
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Contains(title)).First();
+                    goto m;
+                }
+                if (title != null && inTag != null)
+                {
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Contains(title)).First().FindElement(By.XPath(inTag));
+                    goto m;
+                }
                 if (inTag != null && inText != null)
                 {
                     if (inText.Contains("match"))
@@ -136,25 +166,15 @@ namespace Client_Side
                         string pattern = inText.Split('|').ToArray()[1];
                         Regex r = new Regex(pattern);
 
-                        n = driver.FindElements(By.TagName(className)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => r.IsMatch(j.Text)) != null).First();
+                        n = driver.FindElements(By.ClassName(className)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => r.IsMatch(j.Text)) != null).First();
+                        goto m;
                     }
-                    goto m;
-                }
-                if (inText != null)
-                {
-                    n = driver.FindElements(By.ClassName(className)).Where(i => i.Text.Contains(inText)).First();
-                }
-                if(inTag != null && title == null)
-                {
-                    n = driver.FindElements(By.ClassName(className)).Where(i => i.FindElements(By.XPath(inTag)).Count > 0).First().FindElement(By.XPath(inTag));
-                }
-                if (title != null && inTag == null)
-                {
-                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Contains(title)).First();
-                }
-                if (title != null && inTag != null)
-                {
-                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Contains(title)).First().FindElement(By.XPath(inTag));
+                    else
+                    {
+                        n = driver.FindElements(By.ClassName(className)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => j.Text.Contains(inText)) != null).First();
+                        goto m;
+                    }
+                    
                 }
             }
             if (xPath!=null)
@@ -237,6 +257,7 @@ namespace Client_Side
                                     {
                                         LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
                                         fl = false;
+
                                         //Console.WriteLine(DateTime.Now);
                                     }
                                     catch (Exception ex) { }
