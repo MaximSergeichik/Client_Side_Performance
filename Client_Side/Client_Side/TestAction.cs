@@ -228,8 +228,6 @@ namespace Client_Side
                 }
                 else
                 {
-                    //TimeSpan ts = new TimeSpan(0, 3, 0);
-                    //WebDriverWait wait = new WebDriverWait(driver, ts);
                     switch (type)
                     {
                         case "refresh":
@@ -242,7 +240,6 @@ namespace Client_Side
                                     {
                                         LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
                                         fl = false;
-                                        //Console.WriteLine(DateTime.Now);
                                     }
                                     catch (Exception ex) { }
                                 }
@@ -256,9 +253,13 @@ namespace Client_Side
                                     try
                                     {
                                         LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
+                                        DateTime d = DateTime.Now;
                                         fl = false;
-
-                                        //Console.WriteLine(DateTime.Now);
+                                        IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
+                                        List<string> list = new List<string>();
+                                        list.Add(n.Text+","+String.Format("{0:MM/dd/yyyy HH:mm:ss}",d));
+                                        File.AppendAllLines(Directory.GetCurrentDirectory() + "/popups.csv", list);
+                                        list = null;
                                     }
                                     catch (Exception ex) { }
                                 }
@@ -316,7 +317,7 @@ namespace Client_Side
                                     }
                                     catch (Exception ex) { }
                                 }
-//                                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(waitFor)));
+                                
                                 DateTime end = DateTime.Now;
                                 int time = Convert.ToInt32((end-start).TotalMilliseconds);
                                 WriteData.SendData(TestActionHelp.GetWaitTime(driver, name, time));
@@ -324,8 +325,15 @@ namespace Client_Side
                             }
                         case "click":
                             {
-                                //File.WriteAllText(@"D:\Perfomance\ClientSide\Client_Side_Performance\check.txt", driver.PageSource);
                                 IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
+                                if (name.Contains("Ready"))
+                                {
+                                    DateTime d = DateTime.Now;
+                                    List<string> list = new List<string>();
+                                    list.Add("ReadyClick," + String.Format("{0:MM/dd/yyyy HH:mm:ss}", d));
+                                    File.AppendAllLines(Directory.GetCurrentDirectory() + "/ReadyClicks.csv", list);
+                                    list = null;
+                                }
                                 if (measure == "true")
                                 {
                                     Boolean fl = true;
@@ -357,8 +365,6 @@ namespace Client_Side
                                             }
                                         }
                                         
-                                        //DateTime end = DateTime.Now;
-                                        //int time = Convert.ToInt32((end - start).TotalMilliseconds) - time1;
 
                                         WriteData.SendData(TestActionHelp.GetWaitTime(driver, name, time1));
                                     }
