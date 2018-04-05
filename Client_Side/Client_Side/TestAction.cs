@@ -53,6 +53,9 @@ namespace Client_Side
 
         public string sendInLog { get; set; }
 
+        private static DateTime ReadyClick;
+
+
         public TestAction() { }
 
         public IWebElement LocateElement(IWebDriver driver, string xPath, string className, string title, string tag, string inTag, string inLabel, string inText, string inValue, string id)
@@ -257,7 +260,7 @@ namespace Client_Side
                                         fl = false;
                                         IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
                                         List<string> list = new List<string>();
-                                        list.Add(n.Text+","+String.Format("{0:MM/dd/yyyy HH:mm:ss}",d));
+                                        list.Add(n.Text+","+String.Format("{0:MM/dd/yyyy HH:mm:ss},{1:MM/dd/yyyy HH:mm:ss}",d, ReadyClick));
                                         File.AppendAllLines(Directory.GetCurrentDirectory() + "/popups.csv", list);
                                         list = null;
                                     }
@@ -328,11 +331,7 @@ namespace Client_Side
                                 IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
                                 if (name.Contains("Ready"))
                                 {
-                                    DateTime d = DateTime.Now;
-                                    List<string> list = new List<string>();
-                                    list.Add("ReadyClick," + String.Format("{0:MM/dd/yyyy HH:mm:ss}", d));
-                                    File.AppendAllLines(Directory.GetCurrentDirectory() + "/ReadyClicks.csv", list);
-                                    list = null;
+                                    ReadyClick = DateTime.Now;
                                 }
                                 if (measure == "true")
                                 {
