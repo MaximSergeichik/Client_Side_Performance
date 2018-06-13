@@ -26,6 +26,7 @@ namespace Client_Side
         public string attribute { get; set; }
         public string name { get; set; }
         public string measure { get; set; }
+        public string measureType { get; set; }
         public string text { get; set; }
         public string value { get; set; }
         public string iterations { get; set; }
@@ -203,6 +204,9 @@ namespace Client_Side
             try
             {
                 IWebDriver driver = WebDriver.Driver;
+
+                
+
                 if (!useWaiting)
                 {
                     switch (type)
@@ -274,6 +278,7 @@ namespace Client_Side
                                 for (int i=0;i<count;i++)
                                 {
                                     innerActions.ForEach(k => k.Perform());
+                                    Console.WriteLine(i);
                                 }
                                 break;
                             }
