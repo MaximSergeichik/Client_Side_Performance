@@ -31,6 +31,7 @@ namespace Client_Side
                         case "text": { o.text = a.Value; break; }
                         case "measure": { o.measure = a.Value; break; }
                         case "measureType": { o.measureType = a.Value; break; }
+                        case "wait": { o.wait = a.Value; break; }
                         case "waitForXPath": { o.waitForXPath = a.Value; break; }
                         case "waitForClassName": { o.waitForClassName = a.Value; break; }
                         case "waitForTitle": { o.waitForTitle = a.Value; break; }

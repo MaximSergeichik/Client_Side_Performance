@@ -13,8 +13,6 @@ namespace Client_Side
 {
     class TestAction
     {
-        public static Boolean useWaiting;
-        public static Boolean isDebug;
         public static string creditianals;
         public static int numb;
 
@@ -27,13 +25,14 @@ namespace Client_Side
         public string name { get; set; }
         public string measure { get; set; }
         public string measureType { get; set; }
+        public string wait { get; set; }
         public string text { get; set; }
         public string value { get; set; }
         public string iterations { get; set; }
-        
-        
+
+
         public string waitForXPath { get; set; }
-        public string waitForClassName {get; set;}
+        public string waitForClassName { get; set; }
         public string waitForTitle { get; set; }
         public string waitForTag { get; set; }
         public string waitForInTag { get; set; }
@@ -59,136 +58,7 @@ namespace Client_Side
 
         public TestAction() { }
 
-        public IWebElement LocateElement(IWebDriver driver, string xPath, string className, string title, string tag, string inTag, string inLabel, string inText, string inValue, string id)
-        {
-            IWebElement n = null;
-
-            if (tag != null)
-            {
-                if (id != null)
-                {
-                    if (inText == null && inTag == null)
-                    {
-                        n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("id").Contains(id)).First();
-                    }
-                    if (inTag != null && inText != null)
-                    {
-                        if (inText.Contains("match"))
-                        {
-                            string pattern = inText.Split('|').ToArray()[1];
-                            Regex r = new Regex(pattern);
-                            n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("id").Contains(id)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => r.IsMatch(j.Text)) != null).First();
-                            inText = null;
-                        }
-                        else
-                        {
-                            n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("id").Contains(id)).First().FindElements(By.XPath(inTag)).Where(j => j.Text.Contains(inText)).First();
-                            inText = null;
-                        }
-                    }
-                }
-                if (inValue != null)
-                {
-                    n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("value").Contains(inValue)).First();
-                }
-                if (title != null && inTag == null)
-                {
-                    if (title.Contains("match"))
-                    {
-                        string pattern = title.Split('|').ToArray()[1];
-                        Regex r = new Regex(pattern);
-
-                        n = driver.FindElements(By.TagName(tag)).Where(i => r.IsMatch(i.GetAttribute("title"))).First();
-                    }
-                    else
-                    {
-                        n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Contains(title)).First();
-                    }
-                }
-                if (title != null && inTag != null)
-                {
-                    n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Contains(title)).First().FindElement(By.XPath(inTag));
-                }
-                if (inTag != null && inLabel != null)
-                {
-                    List<IWebElement> list = driver.FindElements(By.TagName(tag)).ToList();
-                    foreach(var a in list)
-                    {
-                        try
-                        {
-                            if (a.FindElement(By.TagName("label")).Text.Contains(inLabel))
-                            {
-                                n = a;
-                            }
-                        }
-                        catch (Exception ex)
-                        { }
-                    }
-                    n = n.FindElement(By.XPath(inTag));
-                }
-                if (inText != null) 
-                {
-                    if (!inText.Contains("match"))
-                    {
-                        n = driver.FindElements(By.TagName(tag)).Where(i => i.Text.Contains(inText)).First();
-                    }
-                    else
-                    {
-                        string pattern = inText.Split('|').ToArray()[1];
-                        Regex r = new Regex(pattern);
-
-                        n = driver.FindElements(By.TagName(tag)).Where(i => r.IsMatch(i.Text)).First();
-                    }
-                }
-            }
-            if (className != null)
-            {
-                if (inText != null && inTag == null)
-                {
-                    n = driver.FindElements(By.ClassName(className)).Where(i => i.Text.Contains(inText)).First();
-                    goto m;
-                }
-                if(inTag != null && title == null)
-                {
-                    n = driver.FindElements(By.ClassName(className)).Where(i => i.FindElements(By.XPath(inTag)).Count > 0).First().FindElement(By.XPath(inTag));
-                    goto m;
-                }
-                if (title != null && inTag == null)
-                {
-                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Contains(title)).First();
-                    goto m;
-                }
-                if (title != null && inTag != null)
-                {
-                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Contains(title)).First().FindElement(By.XPath(inTag));
-                    goto m;
-                }
-                if (inTag != null && inText != null)
-                {
-                    if (inText.Contains("match"))
-                    {
-                        string pattern = inText.Split('|').ToArray()[1];
-                        Regex r = new Regex(pattern);
-
-                        n = driver.FindElements(By.ClassName(className)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => r.IsMatch(j.Text)) != null).First();
-                        goto m;
-                    }
-                    else
-                    {
-                        n = driver.FindElements(By.ClassName(className)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => j.Text.Contains(inText)) != null).First();
-                        goto m;
-                    }
-                    
-                }
-            }
-            if (xPath!=null)
-            {
-                n = driver.FindElement(By.XPath(xPath));
-            }
-            m:
-            return n;
-        }
-
+       
         public void Show()
         {
             switch (type)
@@ -204,293 +74,211 @@ namespace Client_Side
             try
             {
                 IWebDriver driver = WebDriver.Driver;
-
-                
-
-                if (!useWaiting)
+                switch (type)
                 {
-                    switch (type)
-                    {
-                        case "navigate":
+                    case "navigate":
+                        {
+                            if (measure == "true")
+                            {
+                                switch (measureType)
+                                {
+                                    case "API":
+                                        {
+                                            driver.Navigate().GoToUrl(innerText);
+                                            if (wait == "true")
+                                            {
+                                                TestActionHelp.WaitForElement(driver, this);
+                                            }
+                                            WriteData.SendData(TestActionHelp.GetTimes(driver, name));
+                                            break;
+                                        }
+                                    case "Watch":
+                                        {
+                                            DateTime start = DateTime.Now;
+                                            driver.Navigate().GoToUrl(innerText);
+                                            if (wait == "true")
+                                            {
+                                                TestActionHelp.WaitForElement(driver, this);
+                                            }
+                                            DateTime end = DateTime.Now;
+                                            int time = (int)(end - start).TotalMilliseconds;
+                                            WriteData.SendData(TestActionHelp.GetWaitTime(this.name, time));
+                                            break;
+                                        }
+                                }
+                            }
+                            else
                             {
                                 driver.Navigate().GoToUrl(objectXPath);
-                                WriteData.SendData(TestActionHelp.GetTimes(driver, name));
-                                break;
                             }
-                        case "click":
+                            break;
+                        }
+                    case "click":
+                        {
+                            IWebElement el = TestActionHelp.LocateElement(driver, this, false);
+                            if (measure == "true")
                             {
-                                driver.FindElement(By.XPath(objectXPath)).Click();
-                                if (measure == "true")
+                                switch (measureType)
                                 {
-                                    WriteData.SendData(TestActionHelp.GetTimes(driver, name));
+                                    case "API":
+                                        {
+                                            el.Click();
+                                            if (wait == "true")
+                                            {
+                                                TestActionHelp.WaitForElement(driver, this);
+                                            }
+                                            WriteData.SendData(TestActionHelp.GetTimes(driver, name));
+                                            break;
+                                        }
+                                    case "Watch":
+                                        {
+                                            DateTime start = DateTime.Now;
+                                            el.Click();
+                                            if (wait == "true")
+                                            {
+                                                TestActionHelp.WaitForElement(driver, this);
+                                            }
+                                            DateTime end = DateTime.Now;
+                                            int time = (int)(end - start).TotalMilliseconds;
+                                            WriteData.SendData(TestActionHelp.GetWaitTime(this.name, time));
+                                            break;
+                                        }
                                 }
-                                break;
                             }
-                        case "sendKeys":
+                            else
                             {
-                                driver.FindElement(By.XPath(objectXPath)).SendKeys(attribute);
-                                break;
+                                el.Click();
                             }
-                    }
-                }
-                else
-                {
-                    switch (type)
-                    {
-                        case "refresh":
+                            break;
+                        }
+                    case "sendKeys":
+                        {
+                            IWebElement el = TestActionHelp.LocateElement(driver, this, false);
+                            if (measure == "true")
+                            {
+                                switch (measureType)
+                                {
+                                    case "API":
+                                        {
+                                            el.SendKeys(text);
+                                            if (wait == "true")
+                                            {
+                                                TestActionHelp.WaitForElement(driver, this);
+                                            }
+                                            WriteData.SendData(TestActionHelp.GetTimes(driver, name));
+                                            break;
+                                        }
+                                    case "Watch":
+                                        {
+                                            DateTime start = DateTime.Now;
+                                            el.SendKeys(text);
+                                            if (wait == "true")
+                                            {
+                                                TestActionHelp.WaitForElement(driver, this);
+                                            }
+                                            DateTime end = DateTime.Now;
+                                            int time = (int)(end - start).TotalMilliseconds;
+                                            WriteData.SendData(TestActionHelp.GetWaitTime(this.name, time));
+                                            break;
+                                        }
+                                }
+                            }
+                            else
+                            {
+                                el.SendKeys(text);
+                            }
+                            break;
+                        }
+                    case "refresh":
+                        {
+                            if (measure == "true")
+                            {
+                                switch (measureType)
+                                {
+                                    case "API":
+                                        {
+                                            driver.Navigate().Refresh();
+                                            if (wait == "true")
+                                            {
+                                                TestActionHelp.WaitForElement(driver, this);
+                                            }
+                                            WriteData.SendData(TestActionHelp.GetTimes(driver, name));
+                                            break;
+                                        }
+                                    case "Watch":
+                                        {
+                                            DateTime start = DateTime.Now;
+                                            driver.Navigate().Refresh();
+                                            if (wait == "true")
+                                            {
+                                                TestActionHelp.WaitForElement(driver, this);
+                                            }
+                                            DateTime end = DateTime.Now;
+                                            int time = (int)(end - start).TotalMilliseconds;
+                                            WriteData.SendData(TestActionHelp.GetWaitTime(this.name, time));
+                                            break;
+                                        }
+                                }
+                            }
+                            else
                             {
                                 driver.Navigate().Refresh();
-                                bool fl = true;
-                                while (fl)
-                                {
-                                    try
-                                    {
-                                        LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
-                                        fl = false;
-                                    }
-                                    catch (Exception ex) { }
-                                }
-                                break;
                             }
-                        case "wait":
+                            break;
+                        }
+                    case "wait":
+                        {
+                            TestActionHelp.WaitForElement(driver, this);
+                            break;
+                        }
+                    case "for":
+                        {
+                            int count = Int32.Parse(iterations);
+                            for (int i = 0; i < count; i++)
                             {
-                                bool fl = true;
-                                while (fl)
-                                {
-                                    try
-                                    {
-                                        LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
-                                        DateTime d = DateTime.Now;
-                                        fl = false;
-                                        IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
-                                        List<string> list = new List<string>();
-                                        list.Add(n.Text+","+String.Format("{0:MM/dd/yyyy HH:mm:ss},{1:MM/dd/yyyy HH:mm:ss}",d, ReadyClick));
-                                        File.AppendAllLines(Directory.GetCurrentDirectory() + "/popups.csv", list);
-                                        list = null;
-                                    }
-                                    catch (Exception ex) { }
-                                }
-                                break;
+                                innerActions.ForEach(k => k.Perform());
+                                Console.WriteLine(i);
                             }
-                        case "for":
+                            break;
+                        }
+                    case "if":
+                        {
+                            IWebElement n = TestActionHelp.LocateElement(driver, this, false);
+                            if (value != null)
                             {
-                                int count = Int32.Parse(iterations);
-                                for (int i=0;i<count;i++)
+                                if (n.GetAttribute("value").Equals(value))
                                 {
-                                    innerActions.ForEach(k => k.Perform());
-                                    Console.WriteLine(i);
+                                    innerActions.ForEach(i => i.Perform());
                                 }
-                                break;
                             }
-                        case "if":
+                            if (text != null)
                             {
-                                IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
-                                if (value != null)
+                                if (n.Text.Contains(text))
                                 {
-                                    if (n.GetAttribute("value").Equals(value))
-                                    {
-                                        innerActions.ForEach(i => i.Perform());
-                                    }
+                                    innerActions.ForEach(i => i.Perform());
                                 }
-                                if (text != null)
-                                {
-                                    if (n.Text.Contains(text))
-                                    {
-                                        innerActions.ForEach(i => i.Perform());
-                                    }
-                                }
-                                break;
                             }
-                        case "thinkTime":
+                            break;
+                        }
+                    case "thinkTime":
+                        {
+                            Thread.Sleep(Convert.ToInt32(innerText));
+                            break;
+                        }
+                    case "switchTo":
+                        {
+                            if (text != "parent")
                             {
-                                if (isDebug)
-                                {
-                                    Thread.Sleep(Convert.ToInt32(innerText));
-                                }
-                                break;
+                                IWebElement n = TestActionHelp.LocateElement(driver, this, false);
+                                driver.SwitchTo().Frame(n);
                             }
-                        case "navigate":
+                            else
                             {
-                                Boolean fl = true;
-                                DateTime start = DateTime.Now;
-                                driver.Navigate().GoToUrl(innerText);
-                                
-                                while (fl)
-                                {
-                                    try
-                                    {
-                                        LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
-                                        fl = false;
-                                        Console.WriteLine(DateTime.Now);
-                                    }
-                                    catch (Exception ex) { }
-                                }
-                                
-                                DateTime end = DateTime.Now;
-                                int time = Convert.ToInt32((end-start).TotalMilliseconds);
-                                WriteData.SendData(TestActionHelp.GetWaitTime(driver, name, time));
-                                break;
+                                driver.SwitchTo().ParentFrame();
                             }
-                        case "click":
-                            {
-                                IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
-                                if (name.Contains("Ready"))
-                                {
-                                    ReadyClick = DateTime.Now;
-                                }
-                                if (measure == "true")
-                                {
-                                    Boolean fl = true;
-                                    int time1 = 0;                                    
+                            break;
+                        }
 
-
-                                    if (!name.Contains("Logon") && !name.Contains("LogOff") && !name.Contains("StoreStockLookup"))
-                                    {
-                                        n.Click();
-                                        while (fl)
-                                        {
-                                            try
-                                            {
-                                                LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
-                                                fl = false;
-                                            }
-                                            catch (Exception ex) { }
-                                        }
-                                        Thread.Sleep(5000);
-                                        Boolean f = true;
-                                        while (f)
-                                        {
-                                            if (driver.PageSource.Contains("Performance Statistics"))
-                                            {
-                                                f = false;
-                                                Regex r = new Regex("end-to-end-time\":\"(.*?)s\"");
-                                                Match m = r.Match(driver.PageSource);
-                                                time1 = Convert.ToInt32(Convert.ToDouble(m.Groups[1].Value) * 1000);
-                                            }
-                                        }
-                                        
-
-                                        WriteData.SendData(TestActionHelp.GetWaitTime(driver, name, time1));
-                                    }
-                                    else
-                                    {
-                                        DateTime start = DateTime.Now;
-                                        n.Click();
-                                        Boolean f = true;
-                                        if (name.Contains("Logon"))
-                                        {
-                                            while (f)
-                                            {
-                                                if (driver.PageSource.Contains("Performance Statistics") && driver.PageSource.Contains("ui-step-type\":\"Logon"))
-                                                {
-                                                    f = false;
-                                                    Regex r = new Regex("end-to-end-time\":\"(.*?)s\"");
-                                                    Match m = r.Match(driver.PageSource);
-                                                    time1 = Convert.ToInt32(Convert.ToDouble(m.Groups[1].Value) * 1000);
-                                                }
-                                            }
-                                        }
-                                        while (fl)
-                                        {
-                                            try
-                                            {
-                                                LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
-                                                fl = false;
-                                            }
-                                            catch (Exception ex) { }
-                                        }
-
-                                        DateTime end = DateTime.Now;
-                                        int time = Convert.ToInt32((end - start).TotalMilliseconds) - time1;
-
-                                        if (name.Contains("Logon"))
-                                        {
-                                            WriteData.SendData(TestActionHelp.GetWaitTime(driver, "Logon", time1));
-                                        }
-                                        else
-                                        {
-                                            WriteData.SendData(TestActionHelp.GetWaitTime(driver, name, time));
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    Boolean fl = true;
-                                    n.Click();
-                                    while (fl)
-                                    {
-                                        try
-                                        {
-                                            LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
-                                            fl = false;
-                                        }
-                                        catch (Exception ex) { }
-                                    }
-                                    if (sendInLog!=null)
-                                    {
-                                        Program.WriteLog("[CHANGED] " + driver.FindElements(By.TagName("span")).Where(i => i.Text.Equals(i.GetAttribute("title"))).First().Text);
-                                    }
-                                }
-                                break;
-                            }
-                        case "switchTo":
-                            {
-                                if (text != "parent")
-                                {
-                                    IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
-                                    driver.SwitchTo().Frame(n);
-                                }
-                                else
-                                {
-                                    driver.SwitchTo().ParentFrame();
-                                }
-                                break;
-                            }
-                        case "sendKeys":
-                            {
-                                string buf = text;
-                                Random r = new Random();
-                                IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
-                                if (text.Contains("randomNumb"))
-                                {
-                                    buf = text.Replace("randomNumb", r.Next(1000000, 9999999).ToString());
-                                }
-                                if (text.Contains("randomStr"))
-                                {
-                                    buf = text.Replace("randomStr", Path.GetRandomFileName().Replace(".",""));
-                                }
-                                if (text.Contains("date"))
-                                {
-                                    buf = text.Replace("date", DateTime.Now.ToString("yyyyMMddHHmmss"));
-                                }
-                                if (text.Contains("FromFile"))
-                                {
-                                    string[] st = text.Split('|');
-                                    List<string> list = File.ReadAllLines(st[1]).ToList();
-                                    buf = list[r.Next(list.Count)];
-                                }
-                                if(text.Contains("user"))
-                                {
-                                    int c = Convert.ToInt32(File.ReadAllText(@"D:\Perfomance\ClientSide\Client_Side_Performance\Configs\count"));
-                                    buf = text.Replace("user", String.Format("PERFTEST_{0:000}", c));
-                                    c++;
-                                    File.WriteAllText(@"D:\Perfomance\ClientSide\Client_Side_Performance\Configs\count", c.ToString());
-                                }
-                                
-                                Thread.Sleep(1000);
-                                
-
-                                string s = n.GetAttribute("value");
-                                string s1 = "";
-                                for (int i = 0; i < s.Length;i++ )
-                                {
-                                    s1 += "\b";
-                                }
-                                n.SendKeys(s1);
-                                n.SendKeys(buf);
-                                break;
-                            }
-                    }
                 }
             }
             catch (Exception ex)
@@ -501,3 +289,426 @@ namespace Client_Side
         }
     }
 }
+
+
+
+
+ //public IWebElement LocateElement(IWebDriver driver, string xPath, string className, string title, string tag, string inTag, string inLabel, string inText, string inValue, string id)
+ //       {
+ //           IWebElement n = null;
+
+ //           if (tag != null)
+ //           {
+ //               if (id != null)
+ //               {
+ //                   if (inText == null && inTag == null)
+ //                   {
+ //                       n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("id").Contains(id)).First();
+ //                   }
+ //                   if (inTag != null && inText != null)
+ //                   {
+ //                       if (inText.Contains("match"))
+ //                       {
+ //                           string pattern = inText.Split('|').ToArray()[1];
+ //                           Regex r = new Regex(pattern);
+ //                           n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("id").Contains(id)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => r.IsMatch(j.Text)) != null).First();
+ //                           inText = null;
+ //                       }
+ //                       else
+ //                       {
+ //                           n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("id").Contains(id)).First().FindElements(By.XPath(inTag)).Where(j => j.Text.Contains(inText)).First();
+ //                           inText = null;
+ //                       }
+ //                   }
+ //               }
+ //               if (inValue != null)
+ //               {
+ //                   n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("value").Contains(inValue)).First();
+ //               }
+ //               if (title != null && inTag == null)
+ //               {
+ //                   if (title.Contains("match"))
+ //                   {
+ //                       string pattern = title.Split('|').ToArray()[1];
+ //                       Regex r = new Regex(pattern);
+
+ //                       n = driver.FindElements(By.TagName(tag)).Where(i => r.IsMatch(i.GetAttribute("title"))).First();
+ //                   }
+ //                   else
+ //                   {
+ //                       n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Contains(title)).First();
+ //                   }
+ //               }
+ //               if (title != null && inTag != null)
+ //               {
+ //                   n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Contains(title)).First().FindElement(By.XPath(inTag));
+ //               }
+ //               if (inTag != null && inLabel != null)
+ //               {
+ //                   List<IWebElement> list = driver.FindElements(By.TagName(tag)).ToList();
+ //                   foreach (var a in list)
+ //                   {
+ //                       try
+ //                       {
+ //                           if (a.FindElement(By.TagName("label")).Text.Contains(inLabel))
+ //                           {
+ //                               n = a;
+ //                           }
+ //                       }
+ //                       catch (Exception ex)
+ //                       { }
+ //                   }
+ //                   n = n.FindElement(By.XPath(inTag));
+ //               }
+ //               if (inText != null)
+ //               {
+ //                   if (!inText.Contains("match"))
+ //                   {
+ //                       n = driver.FindElements(By.TagName(tag)).Where(i => i.Text.Contains(inText)).First();
+ //                   }
+ //                   else
+ //                   {
+ //                       string pattern = inText.Split('|').ToArray()[1];
+ //                       Regex r = new Regex(pattern);
+
+ //                       n = driver.FindElements(By.TagName(tag)).Where(i => r.IsMatch(i.Text)).First();
+ //                   }
+ //               }
+ //           }
+ //           if (className != null)
+ //           {
+ //               if (inText != null && inTag == null)
+ //               {
+ //                   n = driver.FindElements(By.ClassName(className)).Where(i => i.Text.Contains(inText)).First();
+ //                   goto m;
+ //               }
+ //               if (inTag != null && title == null)
+ //               {
+ //                   n = driver.FindElements(By.ClassName(className)).Where(i => i.FindElements(By.XPath(inTag)).Count > 0).First().FindElement(By.XPath(inTag));
+ //                   goto m;
+ //               }
+ //               if (title != null && inTag == null)
+ //               {
+ //                   n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Contains(title)).First();
+ //                   goto m;
+ //               }
+ //               if (title != null && inTag != null)
+ //               {
+ //                   n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Contains(title)).First().FindElement(By.XPath(inTag));
+ //                   goto m;
+ //               }
+ //               if (inTag != null && inText != null)
+ //               {
+ //                   if (inText.Contains("match"))
+ //                   {
+ //                       string pattern = inText.Split('|').ToArray()[1];
+ //                       Regex r = new Regex(pattern);
+
+ //                       n = driver.FindElements(By.ClassName(className)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => r.IsMatch(j.Text)) != null).First();
+ //                       goto m;
+ //                   }
+ //                   else
+ //                   {
+ //                       n = driver.FindElements(By.ClassName(className)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => j.Text.Contains(inText)) != null).First();
+ //                       goto m;
+ //                   }
+
+ //               }
+ //           }
+ //           if (xPath != null)
+ //           {
+ //               n = driver.FindElement(By.XPath(xPath));
+ //           }
+ //       m:
+ //           return n;
+ //       }
+
+
+
+
+
+//if (!useWaiting)
+//                {
+//                    switch (type)
+//                    {
+//                        case "navigate":
+//                            {
+//                                driver.Navigate().GoToUrl(objectXPath);
+//                                WriteData.SendData(TestActionHelp.GetTimes(driver, name));
+//                                break;
+//                            }
+//                        case "click":
+//                            {
+//                                driver.FindElement(By.XPath(objectXPath)).Click();
+//                                if (measure == "true")
+//                                {
+//                                    WriteData.SendData(TestActionHelp.GetTimes(driver, name));
+//                                }
+//                                break;
+//                            }
+//                        case "sendKeys":
+//                            {
+//                                driver.FindElement(By.XPath(objectXPath)).SendKeys(attribute);
+//                                break;
+//                            }
+//                    }
+//                }
+//                else
+//                {
+//                    switch (type)
+//                    {
+//                        case "refresh":
+//                            {
+//                                driver.Navigate().Refresh();
+//                                bool fl = true;
+//                                while (fl)
+//                                {
+//                                    try
+//                                    {
+//                                        LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
+//                                        fl = false;
+//                                    }
+//                                    catch (Exception ex) { }
+//                                }
+//                                break;
+//                            }
+//                        case "wait":
+//                            {
+//                                bool fl = true;
+//                                while (fl)
+//                                {
+//                                    try
+//                                    {
+//                                        LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
+//                                        DateTime d = DateTime.Now;
+//                                        fl = false;
+//                                        IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
+//                                        List<string> list = new List<string>();
+//                                        list.Add(n.Text + "," + String.Format("{0:MM/dd/yyyy HH:mm:ss},{1:MM/dd/yyyy HH:mm:ss}", d, ReadyClick));
+//                                        File.AppendAllLines(Directory.GetCurrentDirectory() + "/popups.csv", list);
+//                                        list = null;
+//                                    }
+//                                    catch (Exception ex) { }
+//                                }
+//                                break;
+//                            }
+//                        case "for":
+//                            {
+//                                int count = Int32.Parse(iterations);
+//                                for (int i = 0; i < count; i++)
+//                                {
+//                                    innerActions.ForEach(k => k.Perform());
+//                                    Console.WriteLine(i);
+//                                }
+//                                break;
+//                            }
+//                        case "if":
+//                            {
+//                                IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
+//                                if (value != null)
+//                                {
+//                                    if (n.GetAttribute("value").Equals(value))
+//                                    {
+//                                        innerActions.ForEach(i => i.Perform());
+//                                    }
+//                                }
+//                                if (text != null)
+//                                {
+//                                    if (n.Text.Contains(text))
+//                                    {
+//                                        innerActions.ForEach(i => i.Perform());
+//                                    }
+//                                }
+//                                break;
+//                            }
+//                        case "thinkTime":
+//                            {
+//                                if (isDebug)
+//                                {
+//                                    Thread.Sleep(Convert.ToInt32(innerText));
+//                                }
+//                                break;
+//                            }
+//                        case "navigate":
+//                            {
+//                                Boolean fl = true;
+//                                DateTime start = DateTime.Now;
+//                                driver.Navigate().GoToUrl(innerText);
+
+//                                while (fl)
+//                                {
+//                                    try
+//                                    {
+//                                        LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
+//                                        fl = false;
+//                                        Console.WriteLine(DateTime.Now);
+//                                    }
+//                                    catch (Exception ex) { }
+//                                }
+
+//                                DateTime end = DateTime.Now;
+//                                int time = Convert.ToInt32((end - start).TotalMilliseconds);
+//                                WriteData.SendData(TestActionHelp.GetWaitTime(driver, name, time));
+//                                break;
+//                            }
+//                        case "click":
+//                            {
+//                                IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
+//                                if (name.Contains("Ready"))
+//                                {
+//                                    ReadyClick = DateTime.Now;
+//                                }
+//                                if (measure == "true")
+//                                {
+//                                    Boolean fl = true;
+//                                    int time1 = 0;
+
+
+//                                    if (!name.Contains("Logon") && !name.Contains("LogOff") && !name.Contains("StoreStockLookup"))
+//                                    {
+//                                        n.Click();
+//                                        while (fl)
+//                                        {
+//                                            try
+//                                            {
+//                                                LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
+//                                                fl = false;
+//                                            }
+//                                            catch (Exception ex) { }
+//                                        }
+//                                        Thread.Sleep(5000);
+//                                        Boolean f = true;
+//                                        while (f)
+//                                        {
+//                                            if (driver.PageSource.Contains("Performance Statistics"))
+//                                            {
+//                                                f = false;
+//                                                Regex r = new Regex("end-to-end-time\":\"(.*?)s\"");
+//                                                Match m = r.Match(driver.PageSource);
+//                                                time1 = Convert.ToInt32(Convert.ToDouble(m.Groups[1].Value) * 1000);
+//                                            }
+//                                        }
+
+
+//                                        WriteData.SendData(TestActionHelp.GetWaitTime(driver, name, time1));
+//                                    }
+//                                    else
+//                                    {
+//                                        DateTime start = DateTime.Now;
+//                                        n.Click();
+//                                        Boolean f = true;
+//                                        if (name.Contains("Logon"))
+//                                        {
+//                                            while (f)
+//                                            {
+//                                                if (driver.PageSource.Contains("Performance Statistics") && driver.PageSource.Contains("ui-step-type\":\"Logon"))
+//                                                {
+//                                                    f = false;
+//                                                    Regex r = new Regex("end-to-end-time\":\"(.*?)s\"");
+//                                                    Match m = r.Match(driver.PageSource);
+//                                                    time1 = Convert.ToInt32(Convert.ToDouble(m.Groups[1].Value) * 1000);
+//                                                }
+//                                            }
+//                                        }
+//                                        while (fl)
+//                                        {
+//                                            try
+//                                            {
+//                                                LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
+//                                                fl = false;
+//                                            }
+//                                            catch (Exception ex) { }
+//                                        }
+
+//                                        DateTime end = DateTime.Now;
+//                                        int time = Convert.ToInt32((end - start).TotalMilliseconds) - time1;
+
+//                                        if (name.Contains("Logon"))
+//                                        {
+//                                            WriteData.SendData(TestActionHelp.GetWaitTime(driver, "Logon", time1));
+//                                        }
+//                                        else
+//                                        {
+//                                            WriteData.SendData(TestActionHelp.GetWaitTime(driver, name, time));
+//                                        }
+//                                    }
+//                                }
+//                                else
+//                                {
+//                                    Boolean fl = true;
+//                                    n.Click();
+//                                    while (fl)
+//                                    {
+//                                        try
+//                                        {
+//                                            LocateElement(driver, waitForXPath, waitForClassName, waitForTitle, waitForTag, waitForInTag, waitForInLabel, waitForInText, waitForInValue, waitForId);
+//                                            fl = false;
+//                                        }
+//                                        catch (Exception ex) { }
+//                                    }
+//                                    if (sendInLog != null)
+//                                    {
+//                                        Program.WriteLog("[CHANGED] " + driver.FindElements(By.TagName("span")).Where(i => i.Text.Equals(i.GetAttribute("title"))).First().Text);
+//                                    }
+//                                }
+//                                break;
+//                            }
+//                        case "switchTo":
+//                            {
+//                                if (text != "parent")
+//                                {
+//                                    IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
+//                                    driver.SwitchTo().Frame(n);
+//                                }
+//                                else
+//                                {
+//                                    driver.SwitchTo().ParentFrame();
+//                                }
+//                                break;
+//                            }
+//                        case "sendKeys":
+//                            {
+//                                string buf = text;
+//                                Random r = new Random();
+//                                IWebElement n = LocateElement(driver, objectXPath, objectClassName, objectTitle, objectTag, objectInTag, objectInLabel, objectInText, objectInValue, objectId);
+//                                if (text.Contains("randomNumb"))
+//                                {
+//                                    buf = text.Replace("randomNumb", r.Next(1000000, 9999999).ToString());
+//                                }
+//                                if (text.Contains("randomStr"))
+//                                {
+//                                    buf = text.Replace("randomStr", Path.GetRandomFileName().Replace(".", ""));
+//                                }
+//                                if (text.Contains("date"))
+//                                {
+//                                    buf = text.Replace("date", DateTime.Now.ToString("yyyyMMddHHmmss"));
+//                                }
+//                                if (text.Contains("FromFile"))
+//                                {
+//                                    string[] st = text.Split('|');
+//                                    List<string> list = File.ReadAllLines(st[1]).ToList();
+//                                    buf = list[r.Next(list.Count)];
+//                                }
+//                                if (text.Contains("user"))
+//                                {
+//                                    int c = Convert.ToInt32(File.ReadAllText(@"D:\Perfomance\ClientSide\Client_Side_Performance\Configs\count"));
+//                                    buf = text.Replace("user", String.Format("PERFTEST_{0:000}", c));
+//                                    c++;
+//                                    File.WriteAllText(@"D:\Perfomance\ClientSide\Client_Side_Performance\Configs\count", c.ToString());
+//                                }
+
+//                                Thread.Sleep(1000);
+
+
+//                                string s = n.GetAttribute("value");
+//                                string s1 = "";
+//                                for (int i = 0; i < s.Length; i++)
+//                                {
+//                                    s1 += "\b";
+//                                }
+//                                n.SendKeys(s1);
+//                                n.SendKeys(buf);
+//                                break;
+//                            }
+//                    }
+//                }

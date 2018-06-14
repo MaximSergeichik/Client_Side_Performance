@@ -38,6 +38,7 @@ namespace Client_Side
             }
             catch(ThreadAbortException ex)
             {
+                Console.WriteLine(ex);
                 WebDriver.Close();
                 File.Delete(Directory.GetCurrentDirectory() + "/temp");
             }
@@ -65,6 +66,7 @@ namespace Client_Side
                 {
                     flag = false;
                     ShowMessage(String.Format("Unable to parse folder for logs. Please, read help. \nClient_Side.exe --help"));
+                    Console.WriteLine(ex);
                 }
                 
 
@@ -78,17 +80,9 @@ namespace Client_Side
                 {
                     ShowMessage(String.Format("Unable to parse browser for work. Please, read help. \nClient_Side.exe --help"));
                     flag = false;
+                    Console.WriteLine(ex);
                 }
-                try
-                {
-                    string s = "true";
-                    TestAction.isDebug = Convert.ToBoolean(s);
-                    if (TestAction.isDebug)
-                    {
-                        ShowMessage(String.Format("Test will be executed with think times"));
-                    }
-                }
-                catch (Exception ex) { }
+                
 
                 Program.numb = 0;
 
@@ -102,7 +96,10 @@ namespace Client_Side
                     {
                         File.Delete(Directory.GetCurrentDirectory() + "/temp");
                     }
-                    catch (Exception ex) { }
+                    catch (Exception ex) 
+                    {
+                        Console.WriteLine(ex);
+                    }
 
                     Thread th = new Thread(() => RunTest(plan));
                     th.Name = "TestThread";
@@ -127,7 +124,9 @@ namespace Client_Side
                                 }
                             }
                             catch (Exception ex)
-                            { }
+                            {
+                                Console.WriteLine(ex);
+                            }
                         }
                     }
 

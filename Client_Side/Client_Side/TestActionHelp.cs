@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 using System.Web;
+using System.Text.RegularExpressions;
 
 
 namespace Client_Side
@@ -100,6 +101,188 @@ namespace Client_Side
             result.Add("Client,transaction="+Name + ",metric=PageLoadTime,location=" + location + " value=" + time.ToString() + ",URL=\"" + url + "\" " + Timestamp());
 
             return result;
+        }
+
+        public static List<string> GetWaitTime(string Name, int time)
+        {
+            List<string> result = new List<string>();
+            result.Add("Client,transaction=" + Name + ",metric=PageLoadTime,location=" + location + " value=" + time.ToString() + " " + Timestamp());
+
+            return result;
+        }
+
+        public static void WaitForElement(IWebDriver driver, TestAction action)
+        {
+            IWebElement n = null;
+            while (n==null)
+            {
+                n = LocateElement(driver, action, true);
+            }
+        }
+
+        public static IWebElement LocateElement(IWebDriver driver, TestAction action, Boolean wait)
+        {
+            IWebElement n = null;
+
+            string tag;
+            string id;
+            string inText;
+            string inTag;
+            string inValue;
+            string inLabel;
+            string title;
+            string className;
+            string xPath;
+
+            if (wait)
+            {
+                tag = action.waitForInTag;
+                id = action.waitForId;
+                inText = action.waitForInText;
+                inTag = action.waitForInTag;
+                inValue = action.waitForInValue;
+                inLabel = action.waitForInLabel;
+                title = action.waitForTitle;
+                className = action.waitForClassName;
+                xPath = action.waitForXPath;
+            }
+            else
+            {
+                tag = action.objectInTag;
+                id = action.objectId;
+                inText = action.objectInText;
+                inTag = action.objectInTag;
+                inValue = action.objectInValue;
+                inLabel = action.objectInLabel;
+                title = action.objectTitle;
+                className = action.objectClassName;
+                xPath = action.objectXPath;
+            }
+
+            if (tag != null)
+            {
+                if (id != null)
+                {
+                    if (inText == null && inTag == null)
+                    {
+                        n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("id").Contains(id)).First();
+                    }
+                    if (inTag != null && inText != null)
+                    {
+                        if (inText.Contains("match"))
+                        {
+                            string pattern = inText.Split('|').ToArray()[1];
+                            Regex r = new Regex(pattern);
+                            n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("id").Contains(id)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => r.IsMatch(j.Text)) != null).First();
+                            inText = null;
+                        }
+                        else
+                        {
+                            n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("id").Contains(id)).First().FindElements(By.XPath(inTag)).Where(j => j.Text.Contains(inText)).First();
+                            inText = null;
+                        }
+                    }
+                }
+                if (inValue != null)
+                {
+                    n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("value").Contains(inValue)).First();
+                }
+                if (title != null && inTag == null)
+                {
+                    if (title.Contains("match"))
+                    {
+                        string pattern = title.Split('|').ToArray()[1];
+                        Regex r = new Regex(pattern);
+
+                        n = driver.FindElements(By.TagName(tag)).Where(i => r.IsMatch(i.GetAttribute("title"))).First();
+                    }
+                    else
+                    {
+                        n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Contains(title)).First();
+                    }
+                }
+                if (title != null && inTag != null)
+                {
+                    n = driver.FindElements(By.TagName(tag)).Where(i => i.GetAttribute("title").Contains(title)).First().FindElement(By.XPath(inTag));
+                }
+                if (inTag != null && inLabel != null)
+                {
+                    List<IWebElement> list = driver.FindElements(By.TagName(tag)).ToList();
+                    foreach (var a in list)
+                    {
+                        try
+                        {
+                            if (a.FindElement(By.TagName("label")).Text.Contains(inLabel))
+                            {
+                                n = a;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(action.ToString());
+                            Console.WriteLine(ex);
+                        }
+                    }
+                    n = n.FindElement(By.XPath(inTag));
+                }
+                if (inText != null)
+                {
+                    if (!inText.Contains("match"))
+                    {
+                        n = driver.FindElements(By.TagName(tag)).Where(i => i.Text.Contains(inText)).First();
+                    }
+                    else
+                    {
+                        string pattern = inText.Split('|').ToArray()[1];
+                        Regex r = new Regex(pattern);
+
+                        n = driver.FindElements(By.TagName(tag)).Where(i => r.IsMatch(i.Text)).First();
+                    }
+                }
+            }
+            if (className != null)
+            {
+                if (inText != null && inTag == null)
+                {
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.Text.Contains(inText)).First();
+                    goto m;
+                }
+                if (inTag != null && title == null)
+                {
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.FindElements(By.XPath(inTag)).Count > 0).First().FindElement(By.XPath(inTag));
+                    goto m;
+                }
+                if (title != null && inTag == null)
+                {
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Contains(title)).First();
+                    goto m;
+                }
+                if (title != null && inTag != null)
+                {
+                    n = driver.FindElements(By.ClassName(className)).Where(i => i.GetAttribute("title").Contains(title)).First().FindElement(By.XPath(inTag));
+                    goto m;
+                }
+                if (inTag != null && inText != null)
+                {
+                    if (inText.Contains("match"))
+                    {
+                        string pattern = inText.Split('|').ToArray()[1];
+                        Regex r = new Regex(pattern);
+
+                        n = driver.FindElements(By.ClassName(className)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => r.IsMatch(j.Text)) != null).First();
+                        goto m;
+                    }
+                    else
+                    {
+                        n = driver.FindElements(By.ClassName(className)).Where(k => k.FindElements(By.XPath(inTag)).Where(j => j.Text.Contains(inText)) != null).First();
+                        goto m;
+                    }
+
+                }
+            }
+            
+        m:
+            return n;
         }
 
         #endregion
