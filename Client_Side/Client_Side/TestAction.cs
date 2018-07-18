@@ -30,7 +30,7 @@ namespace Client_Side
         public string value { get; set; }
         public string iterations { get; set; }
 
-
+        //attributes for waiting of some element
         public string waitForXPath { get; set; }
         public string waitForClassName { get; set; }
         public string waitForTitle { get; set; }
@@ -41,6 +41,7 @@ namespace Client_Side
         public string waitForInValue { get; set; }
         public string waitForId { get; set; }
 
+        //attributes for detecting of actual element
         public string objectXPath { get; set; }
         public string objectClassName { get; set; }
         public string objectTitle { get; set; }
@@ -50,6 +51,17 @@ namespace Client_Side
         public string objectInText { get; set; }
         public string objectInValue { get; set; }
         public string objectId { get; set; }
+
+        //attributes for detecting of the target element for moveTo command
+        public string targetXPath { get; set; }
+        public string targetClassName { get; set; }
+        public string targetTitle { get; set; }
+        public string targetTag { get; set; }
+        public string targetInTag { get; set; }
+        public string targetInLabel { get; set; }
+        public string targetInText { get; set; }
+        public string targetInValue { get; set; }
+        public string targetId { get; set; }
 
         public string sendInLog { get; set; }
 
@@ -110,12 +122,16 @@ namespace Client_Side
                             else
                             {
                                 driver.Navigate().GoToUrl(objectXPath);
+                                if (wait == "true")
+                                {
+                                    TestActionHelp.WaitForElement(driver, this);
+                                }
                             }
                             break;
                         }
                     case "click":
                         {
-                            IWebElement el = TestActionHelp.LocateElement(driver, this, false);
+                            IWebElement el = TestActionHelp.LocateElement(driver, this, "2");
                             if (measure == "true")
                             {
                                 switch (measureType)
@@ -148,12 +164,16 @@ namespace Client_Side
                             else
                             {
                                 el.Click();
+                                if (wait == "true")
+                                {
+                                    TestActionHelp.WaitForElement(driver, this);
+                                }
                             }
                             break;
                         }
                     case "sendKeys":
                         {
-                            IWebElement el = TestActionHelp.LocateElement(driver, this, false);
+                            IWebElement el = TestActionHelp.LocateElement(driver, this, "2");
                             if (measure == "true")
                             {
                                 switch (measureType)
@@ -186,6 +206,10 @@ namespace Client_Side
                             else
                             {
                                 el.SendKeys(text);
+                                if (wait == "true")
+                                {
+                                    TestActionHelp.WaitForElement(driver, this);
+                                }
                             }
                             break;
                         }
@@ -223,6 +247,10 @@ namespace Client_Side
                             else
                             {
                                 driver.Navigate().Refresh();
+                                if (wait == "true")
+                                {
+                                    TestActionHelp.WaitForElement(driver, this);
+                                }
                             }
                             break;
                         }
@@ -243,7 +271,7 @@ namespace Client_Side
                         }
                     case "if":
                         {
-                            IWebElement n = TestActionHelp.LocateElement(driver, this, false);
+                            IWebElement n = TestActionHelp.LocateElement(driver, this, "2");
                             if (value != null)
                             {
                                 if (n.GetAttribute("value").Equals(value))
@@ -269,12 +297,72 @@ namespace Client_Side
                         {
                             if (text != "parent")
                             {
-                                IWebElement n = TestActionHelp.LocateElement(driver, this, false);
+                                IWebElement n = TestActionHelp.LocateElement(driver, this, "2");
                                 driver.SwitchTo().Frame(n);
+                                if (wait == "true")
+                                {
+                                    TestActionHelp.WaitForElement(driver, this);
+                                }
                             }
                             else
                             {
                                 driver.SwitchTo().ParentFrame();
+                                if (wait == "true")
+                                {
+                                    TestActionHelp.WaitForElement(driver, this);
+                                }
+                            }
+                            break;
+                        }
+                    case "moveTo":
+                        {
+                            IWebElement source = TestActionHelp.LocateElement(driver, this, "2");
+                            IWebElement target = TestActionHelp.LocateElement(driver, this, "3");
+                            if (measure == "true")
+                            {
+                                switch (measureType)
+                                {
+                                    case "API":
+                                        {
+                                            TestActionHelp.MoveElementTo(driver, source, target);
+                                            if (wait == "true")
+                                            {
+                                                TestActionHelp.WaitForElement(driver, this);
+                                            }
+                                            WriteData.SendData(TestActionHelp.GetTimes(driver, name));
+                                            break;
+                                        }
+                                    case "Watch":
+                                        {
+                                            TestActionHelp.MoveElementTo(driver, source, target);
+                                            DateTime start = DateTime.Now;                                            
+                                            if (wait == "true")
+                                            {
+                                                TestActionHelp.WaitForElement(driver, this);
+                                            }
+                                            DateTime end = DateTime.Now;
+                                            int time = (int)(end - start).TotalMilliseconds;
+                                            WriteData.SendData(TestActionHelp.GetWaitTime(this.name, time));
+                                            break;
+                                        }
+                                }
+                            }
+                            else
+                            {
+                                TestActionHelp.MoveElementTo(driver, source, target);
+                                if (wait == "true")
+                                {
+                                    TestActionHelp.WaitForElement(driver, this);
+                                }
+                            }
+                            break;
+                        }
+                    case "switchTab":
+                        {
+                            TestActionHelp.SwitchTab(driver);
+                            if (wait == "true")
+                            {
+                                TestActionHelp.WaitForElement(driver, this);
                             }
                             break;
                         }

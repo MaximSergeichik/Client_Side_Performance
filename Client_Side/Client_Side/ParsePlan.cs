@@ -50,6 +50,15 @@ namespace Client_Side
                         case "objectInValue": { o.objectInValue = a.Value; break; }
                         case "objectId": { o.objectId = a.Value; break; }
                         case "objectXPath": { o.objectXPath = a.Value; break; }
+                        case "targetClassName": { o.targetClassName = a.Value; break; }
+                        case "targetTitle": { o.targetTitle = a.Value; break; }
+                        case "targetTag": { o.targetTag = a.Value; break; }
+                        case "targetInTag": { o.targetInTag = a.Value; break; }
+                        case "targetInLabel": { o.targetInLabel = a.Value; break; }
+                        case "targetInText": { o.targetInText = a.Value; break; }
+                        case "targetInValue": { o.targetInValue = a.Value; break; }
+                        case "targetId": { o.targetId = a.Value; break; }
+                        case "targetXPath": { o.targetXPath = a.Value; break; }
                         case "sendInLog": { o.sendInLog = a.Value; break; }
                         case "value": { o.value = a.Value; break; }
                         case "iterations": { o.iterations = a.Value; break; }
