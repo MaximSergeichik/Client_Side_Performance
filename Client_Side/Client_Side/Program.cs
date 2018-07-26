@@ -13,9 +13,7 @@ namespace Client_Side
 {
     class Program
     {
-        static int all_count;
-
-        public static void ShowMessage(string s)
+        public static void ShowMessageInConsole(string s)
         {
             Console.WriteLine(s);
         }
@@ -26,35 +24,35 @@ namespace Client_Side
             File.AppendAllText(path+"/ClientSideLog.txt", s + "\n");
         }
 
-        public static void RunTest(List<TestAction> plan)
-        {
-            try
-            {
-                Start:
-                plan.ForEach(j => j.Perform());
-                all_count += 1;
-                File.WriteAllText(Directory.GetCurrentDirectory() + "/temp", all_count.ToString());
-                goto Start;
-            }
-            catch(ThreadAbortException ex)
-            {
-                Console.WriteLine(ex);
-                WebDriver.Close();
-                File.Delete(Directory.GetCurrentDirectory() + "/temp");
-            }
-        }
-        
-        public static int numb;
+        //public static void RunTest(List<TestAction> plan)
+        //{
+        //    try
+        //    {
+        //        Start:
+        //        plan.ForEach(j => j.Perform());
+        //        all_count += 1;
+        //        File.WriteAllText(Directory.GetCurrentDirectory() + "/temp", all_count.ToString());
+        //        goto Start;
+        //    }
+        //    catch(ThreadAbortException ex)
+        //    {
+        //        Console.WriteLine(ex);
+        //        WebDriver.Close();
+        //        File.Delete(Directory.GetCurrentDirectory() + "/temp");
+        //    }
+        //}
 
         static int Main(string[] args)
         {
-            all_count = 0;
+            //by default flag is in true
+            //if tool receive some exception on the step of check of command line arguments flag will be set in false and test will be not started
             bool flag = true;
             try
             {
+                //path to config file
                 //string path = args[0];
                 string path = @"D:\Perfomance\ClientSide\Client_Side_Performance\Configs\config_HM.properties";
-                ShowMessage(String.Format("Start work with {0} config file", path));
+                ShowMessageInConsole(String.Format("Start work with {0} config file", path));
 
                 try
                 {
@@ -65,7 +63,7 @@ namespace Client_Side
                 catch(Exception ex)
                 {
                     flag = false;
-                    ShowMessage(String.Format("Unable to parse folder for logs. Please, read help. \nClient_Side.exe --help"));
+                    ShowMessageInConsole(String.Format("Unable to parse folder for logs. Please, read help. \nClient_Side.exe --help"));
                     Console.WriteLine(ex);
                 }
                 
@@ -78,60 +76,57 @@ namespace Client_Side
                 }
                 catch (Exception ex)
                 {
-                    ShowMessage(String.Format("Unable to parse browser for work. Please, read help. \nClient_Side.exe --help"));
+                    ShowMessageInConsole(String.Format("Unable to parse browser for work. Please, read help. \nClient_Side.exe --help"));
                     flag = false;
                     Console.WriteLine(ex);
                 }
-                
-
-                Program.numb = 0;
 
                 if (ParseConfigs.ParseConfigFile(path) && flag)
                 {
-                    List<TestAction> plan = ParsePlan.Plan();
-                    Console.WriteLine("Test Plan Parsed");
-
-
                     try
                     {
-                        File.Delete(Directory.GetCurrentDirectory() + "/temp");
+                        if (Directory.Exists(Directory.GetCurrentDirectory() + "/temp"))
+                        {
+                            Directory.Delete(Directory.GetCurrentDirectory() + "/temp", true);
+                        }
+                        Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/temp");
                     }
-                    catch (Exception ex) 
+                    catch (Exception ex)
                     {
                         Console.WriteLine(ex);
                     }
 
-                    Thread th = new Thread(() => RunTest(plan));
-                    th.Name = "TestThread";
-                    th.Start();
-
-                    while (th.ThreadState != ThreadState.Aborted)
+                    List<TestAction> Plan = ParsePlan.Plan();
+                    Console.WriteLine("Test Plan Parsed");
+                    
+                    TestThreads Test = new TestThreads(TestActionHelp.GetThreadsCount, Plan);
+                    if (TestActionHelp.GetCheckDuration)
                     {
-                        if (TestActionHelp.GetDur)
+                        Test.Start();
+                        while (DateTime.Now<TestActionHelp.GetEndTime)
                         {
-                            if (DateTime.Now >= TestActionHelp.GetEndTime)
-                            {
-                                th.Abort();
-                            }
+                            Thread.Sleep(60000);
+                        }
+                        Test.Abort();
+                    }
+                    else
+                    {
+                    notend:
+                        Thread.Sleep(60000);
+                        int countOfAbortedThreads = Test.GetStateOfAllThreads().Select(t => t.Value.Equals(ThreadState.Aborted)).Count();
+                        if (countOfAbortedThreads == TestActionHelp.GetThreadsCount)
+                        {
+                            goto end;
                         }
                         else
                         {
-                            //try
-                            //{
-                            //    if (Int32.Parse(File.ReadAllText(Directory.GetCurrentDirectory() + "/temp")) >= TestActionHelp.GetIteration)
-                            //    {
-                            //        th.Abort();
-                            //    }
-                            //}
-                            //catch (Exception ex)
-                            //{
-                            //    Console.WriteLine(ex);
-                            //}
+                            goto notend;
                         }
                     }
 
-                }
-                ShowMessage("Test was ended.");
+                }    
+                end:
+                ShowMessageInConsole("Test was ended.");
                 Console.ReadKey();
                 return 0;
             }

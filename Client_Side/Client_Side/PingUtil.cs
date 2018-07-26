@@ -35,12 +35,12 @@ namespace Client_Side
 
             if (Check(u))
             {
-                Program.ShowMessage("[INFO]\t" + url + " is avaliable!");
+                Program.ShowMessageInConsole("[INFO]\t" + url + " is avaliable!");
                 return true;
             }
             else
             {
-                Program.ShowMessage("[ERROR]\t" + url + " is not avaliable!");
+                Program.ShowMessageInConsole("[ERROR]\t" + url + " is not avaliable!");
                 return false;
             }
         }
@@ -66,21 +66,21 @@ namespace Client_Side
                 reg = new Regex(rPort);
                 m = reg.Match(url);
                 int port = Convert.ToInt16(m.Groups[1].Value);
-                Program.ShowMessage("\t[INFO]\tThis ip: " + ip + " is avaliable!\n");
+                Program.ShowMessageInConsole("\t[INFO]\tThis ip: " + ip + " is avaliable!\n");
                 if (CheckPort(ip, port))
                 {
-                    Program.ShowMessage("\t[INFO]\tThis port: " + port + " is avaliable!\n");
+                    Program.ShowMessageInConsole("\t[INFO]\tThis port: " + port + " is avaliable!\n");
                     return true;
                 }
                 else
                 {
-                    Program.ShowMessage("\t[ERROR]\tThis port on this url: " + ip + " is not avaliable!!!\n");
+                    Program.ShowMessageInConsole("\t[ERROR]\tThis port on this url: " + ip + " is not avaliable!!!\n");
                     return false;
                 }
             }
             else
             {
-                Program.ShowMessage("\t[ERROR]\tThis ip: " + ip + "is not avaliable!!!\n");
+                Program.ShowMessageInConsole("\t[ERROR]\tThis ip: " + ip + "is not avaliable!!!\n");
                 return false;
             }
         }

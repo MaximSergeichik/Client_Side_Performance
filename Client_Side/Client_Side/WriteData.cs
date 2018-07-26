@@ -14,7 +14,7 @@ namespace Client_Side
 
         #region Data
 
-        private static FileStream fs;
+        private static FileStream Stream;
 
         private static string Url;
 
@@ -26,7 +26,7 @@ namespace Client_Side
 
         private static string FilePath;
 
-        public static string plan;
+        public static string Plan;
 
 
         #endregion
@@ -62,10 +62,10 @@ namespace Client_Side
 
         private static void CreateResultFile()
         {
-            string time = String.Format("{0:yyyyddMM_HHmmss}_{1}", DateTime.Now, plan).ToString();
+            string time = String.Format("{0:yyyyddMM_HHmmss}_{1}", DateTime.Now, Plan).ToString();
             string path = PathToFile + time + ".txt";
-            fs = File.Create(path);
-            fs.Close();
+            Stream = File.Create(path);
+            Stream.Close();
             FilePath = path;
             IsFile = true;
         }
@@ -74,7 +74,7 @@ namespace Client_Side
         {
             try
             {
-                data.ForEach(i => WorkWithServer.sendData(Url, "Post", i));
+                data.ForEach(i => WorkWithServer.SendDataToServer(Url, "Post", i));
             }
             catch (Exception ex)
             {

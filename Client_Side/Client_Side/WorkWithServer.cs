@@ -9,13 +9,20 @@ namespace Client_Side
 {
     class WorkWithServer
     {
-        private static WebClient cl = new WebClient();
 
-        public static void sendData(string URL, string method, string data)
+        #region Data
+
+        private static WebClient Client = new WebClient();
+
+        #endregion
+
+        #region Methods
+
+        public static void SendDataToServer(string URL, string method, string data)
         {
             try
             {
-                cl.UploadData(URL, method, Encoding.Default.GetBytes(data));
+                Client.UploadData(URL, method, Encoding.Default.GetBytes(data));
             }
             catch (Exception ex)
             {
@@ -23,10 +30,12 @@ namespace Client_Side
             }
         }
 
-        public static string getData(string URL, string query)
+        public static string GetDataFromServer(string URL, string query)
         {
-            string response = cl.DownloadString(URL + Uri.EscapeUriString(query));
+            string response = Client.DownloadString(URL + Uri.EscapeUriString(query));
             return response;
         }
+
+        #endregion
     }
 }

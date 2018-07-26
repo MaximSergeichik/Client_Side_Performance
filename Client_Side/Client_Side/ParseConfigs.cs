@@ -30,14 +30,14 @@ namespace Client_Side
 
             if (data.Keys.Contains("User"))
             {
-                Program.ShowMessage("[INFO]\t'User' was read successfully\n");
-                TestAction.creditianals = data["User"];
+                Program.ShowMessageInConsole("[INFO]\t'User' was read successfully\n");
+                TestAction.Creditianals = data["User"];
             }
             
 
             if (data.Keys.Contains("CheckUrl"))
             {
-                Program.ShowMessage("[INFO]\t'CheckUrl' was read successfully\n");
+                Program.ShowMessageInConsole("[INFO]\t'CheckUrl' was read successfully\n");
                 if (data["CheckUrl"].Contains(','))
                 {
                     foreach (var url in data["CheckUrl"].Split(','))
@@ -60,14 +60,14 @@ namespace Client_Side
             if (data.Keys.Contains("WriteMode"))
             {
                 WriteData.SetWriteMode = data["WriteMode"];
-                Program.ShowMessage("[INFO]\t'WriteMode' was read successfully\n");
+                Program.ShowMessageInConsole("[INFO]\t'WriteMode' was read successfully\n");
                 if ((data["WriteMode"] == "1") || (data["WriteMode"] == "2"))
                 {
                     try
                     {
                         WriteData.SetUrl = data["ServerUrl"];
                         //Tables.SetUrl = data["ServerUrl"];
-                        Program.ShowMessage("[INFO]\t'ServerUrl' was read successfully\n");
+                        Program.ShowMessageInConsole("[INFO]\t'ServerUrl' was read successfully\n");
                         if (!WriteData.PingServerAndPort())
                         {
                             return false;
@@ -75,18 +75,18 @@ namespace Client_Side
                     }
                     catch
                     {
-                        Program.ShowMessage("[ERROR]\tParameter 'ServerUrl' wasn't found in config file but it's required!!!");
+                        Program.ShowMessageInConsole("[ERROR]\tParameter 'ServerUrl' wasn't found in config file but it's required!!!");
                         return false;
                     }
 
                     try
                     {
                         WriteData.SetDBName = data["DBName"];
-                        Program.ShowMessage("[INFO]\t'DBName' was read successfully\n");
+                        Program.ShowMessageInConsole("[INFO]\t'DBName' was read successfully\n");
                     }
                     catch
                     {
-                        Program.ShowMessage("[ERROR]\tParameter 'DBName' wasn't found in config file but it's required!!!");
+                        Program.ShowMessageInConsole("[ERROR]\tParameter 'DBName' wasn't found in config file but it's required!!!");
                         return false;
                     }
                 }
@@ -94,28 +94,28 @@ namespace Client_Side
             else
             {
                 WriteData.SetWriteMode = "0";
-                Program.ShowMessage("[INFO]\t'WriteMode' parameter was set to default value = 0\n");
+                Program.ShowMessageInConsole("[INFO]\t'WriteMode' parameter was set to default value = 0\n");
             }
 
             try
             {
                 TestActionHelp.SetLocation = data["Location"];
-                Program.ShowMessage("[INFO]\t'Location' was read successfully\n");
+                Program.ShowMessageInConsole("[INFO]\t'Location' was read successfully\n");
             }
             catch
             {
-                Program.ShowMessage("[ERROR]\tParameter 'Location' wasn't found in config file but it's required!!!");
+                Program.ShowMessageInConsole("[ERROR]\tParameter 'Location' wasn't found in config file but it's required!!!");
                 return false;
             }
 
             try
             {
                 ParsePlan.SetPathToPlan = data["TestPlan"];
-                Program.ShowMessage("[INFO]\t'TestPlan' was read successfully\n");
+                Program.ShowMessageInConsole("[INFO]\t'TestPlan' was read successfully\n");
             }
             catch
             {
-                Program.ShowMessage("[ERROR]\tParameter 'TestPlan' wasn't found in config file but it's required!!!");
+                Program.ShowMessageInConsole("[ERROR]\tParameter 'TestPlan' wasn't found in config file but it's required!!!");
                 return false;
             }
 
@@ -123,17 +123,28 @@ namespace Client_Side
             {
                 TestActionHelp.SetEndTime = Convert.ToInt32(data["Duration"]);
 
-                Program.ShowMessage("[INFO]\tParameter 'Duration' was read successfully\n");
+                Program.ShowMessageInConsole("[INFO]\tParameter 'Duration' was read successfully\n");
             }
             else if (data.Keys.Contains("IterationCount"))
             {
                 TestActionHelp.SetIteration = Convert.ToInt32(data["IterationCount"]);
-                Program.ShowMessage("[INFO]\tParameter 'IterationCount' was read successfully\n");
+                Program.ShowMessageInConsole("[INFO]\tParameter 'IterationCount' was read successfully\n");
             }
             else
             {
-                Program.ShowMessage("[ERROR]\tNo one from this parameters: 'Duration' or 'IterationCount' were not found in config file but it's required!!!");
+                Program.ShowMessageInConsole("[ERROR]\tNo one from this parameters: 'Duration' or 'IterationCount' were not found in config file but it's required!!!");
                 return false;
+            }
+
+            if (data.Keys.Contains("Threads"))
+            {
+                TestActionHelp.SetThreadsCount = Convert.ToInt32(data["Threads"]);
+                Program.ShowMessageInConsole("[INFO]\tParameter 'Threads' was read successfully\n");
+            }
+            else
+            {
+                TestActionHelp.SetThreadsCount = 1;
+                Program.ShowMessageInConsole("[INFO]\tParameter 'Threads' was set to default value which is equal to 1\n");
             }
 
 

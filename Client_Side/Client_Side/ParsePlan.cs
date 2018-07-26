@@ -10,16 +10,21 @@ namespace Client_Side
 {
     class ParsePlan
     {
+        #region Data
 
         private static string PathToPlan;
-        private static List<TestAction> list1 = new List<TestAction>();
+        private static List<TestAction> TestActions = new List<TestAction>();
+
+        #endregion
+
+        #region Mathods
 
         static TestAction ReadNode(XmlNode node)
         {
             TestAction o = new TestAction();
 
-            o.type = node.Name;
-            o.innerText = node.InnerText;
+            o.Type = node.Name;
+            o.InnerNodeText = node.InnerText;
             if (node.Attributes != null)
             {
                 XmlAttributeCollection attr = node.Attributes;
@@ -27,42 +32,41 @@ namespace Client_Side
                 {
                     switch (a.Name)
                     {
-                        case "name": { o.name = a.Value; break; }
-                        case "text": { o.text = a.Value; break; }
-                        case "measure": { o.measure = a.Value; break; }
-                        case "measureType": { o.measureType = a.Value; break; }
-                        case "wait": { o.wait = a.Value; break; }
-                        case "waitForXPath": { o.waitForXPath = a.Value; break; }
-                        case "waitForClassName": { o.waitForClassName = a.Value; break; }
-                        case "waitForTitle": { o.waitForTitle = a.Value; break; }
-                        case "waitForTag": { o.waitForTag = a.Value; break; }
-                        case "waitForInTag": { o.waitForInTag = a.Value; break; }
-                        case "waitForinLabel": { o.waitForInLabel = a.Value; break; }
-                        case "waitForInText": { o.waitForInText = a.Value; break; }
-                        case "waitForInValue": { o.waitForInValue = a.Value; break; }
-                        case "waitForId": { o.waitForId = a.Value; break; }
-                        case "objectClassName": { o.objectClassName = a.Value; break; }
-                        case "objectTitle": { o.objectTitle = a.Value; break; }
-                        case "objectTag": { o.objectTag = a.Value; break; }
-                        case "objectInTag": { o.objectInTag = a.Value; break; }
-                        case "objectInLabel": { o.objectInLabel = a.Value; break; }
-                        case "objectInText": { o.objectInText = a.Value; break; }
-                        case "objectInValue": { o.objectInValue = a.Value; break; }
-                        case "objectId": { o.objectId = a.Value; break; }
-                        case "objectXPath": { o.objectXPath = a.Value; break; }
-                        case "targetClassName": { o.targetClassName = a.Value; break; }
-                        case "targetTitle": { o.targetTitle = a.Value; break; }
-                        case "targetTag": { o.targetTag = a.Value; break; }
-                        case "targetInTag": { o.targetInTag = a.Value; break; }
-                        case "targetInLabel": { o.targetInLabel = a.Value; break; }
-                        case "targetInText": { o.targetInText = a.Value; break; }
-                        case "targetInValue": { o.targetInValue = a.Value; break; }
-                        case "targetId": { o.targetId = a.Value; break; }
-                        case "targetXPath": { o.targetXPath = a.Value; break; }
-                        case "sendInLog": { o.sendInLog = a.Value; break; }
-                        case "value": { o.value = a.Value; break; }
-                        case "iterations": { o.iterations = a.Value; break; }
-                        default: { o.attribute = a.Value; break; }
+                        case "name": { o.Name = a.Value; break; }
+                        case "text": { o.Text = a.Value; break; }
+                        case "measure": { o.Measure = a.Value; break; }
+                        case "measureType": { o.MeasureType = a.Value; break; }
+                        case "wait": { o.Wait = a.Value; break; }
+                        case "waitForXPath": { o.WaitForXPath = a.Value; break; }
+                        case "waitForClassName": { o.WaitForClassName = a.Value; break; }
+                        case "waitForTitle": { o.WaitForTitle = a.Value; break; }
+                        case "waitForTag": { o.WaitForTag = a.Value; break; }
+                        case "waitForInTag": { o.WaitForInTag = a.Value; break; }
+                        case "waitForinLabel": { o.WaitForInLabel = a.Value; break; }
+                        case "waitForInText": { o.WaitForInText = a.Value; break; }
+                        case "waitForInValue": { o.WaitForInValue = a.Value; break; }
+                        case "waitForId": { o.WaitForId = a.Value; break; }
+                        case "objectClassName": { o.ObjectClassName = a.Value; break; }
+                        case "objectTitle": { o.ObjectTitle = a.Value; break; }
+                        case "objectTag": { o.ObjectTag = a.Value; break; }
+                        case "objectInTag": { o.ObjectInTag = a.Value; break; }
+                        case "objectInLabel": { o.ObjectInLabel = a.Value; break; }
+                        case "objectInText": { o.ObjectInText = a.Value; break; }
+                        case "objectInValue": { o.ObjectInValue = a.Value; break; }
+                        case "objectId": { o.ObjectId = a.Value; break; }
+                        case "objectXPath": { o.ObjectXPath = a.Value; break; }
+                        case "targetClassName": { o.TargetClassName = a.Value; break; }
+                        case "targetTitle": { o.TargetTitle = a.Value; break; }
+                        case "targetTag": { o.TargetTag = a.Value; break; }
+                        case "targetInTag": { o.TargetInTag = a.Value; break; }
+                        case "targetInLabel": { o.TargetInLabel = a.Value; break; }
+                        case "targetInText": { o.TargetInText = a.Value; break; }
+                        case "targetInValue": { o.TargetInValue = a.Value; break; }
+                        case "targetId": { o.TargetId = a.Value; break; }
+                        case "targetXPath": { o.TargetXPath = a.Value; break; }
+                        case "value": { o.Value = a.Value; break; }
+                        case "iterations": { o.Iterations = a.Value; break; }
+                        default: { o.UndefinedAttribute = a.Value; break; }
                     }
                 }
             }
@@ -82,13 +86,13 @@ namespace Client_Side
                 if (node.Name == "if")
                 {
                     TestAction o = ReadNode(node);
-                    o.innerActions = ReadNodes(node.ChildNodes);
+                    o.InnerActions = ReadNodes(node.ChildNodes);
                     list.Add(o);
                 }
                 if (node.Name == "for")
                 {
                     TestAction o = ReadNode(node);
-                    o.innerActions = ReadNodes(node.ChildNodes);
+                    o.InnerActions = ReadNodes(node.ChildNodes);
                     list.Add(o);
                 }
                 else if (node.Name != "xml" && node.Name != "Test")
@@ -101,14 +105,18 @@ namespace Client_Side
 
         public static List<TestAction> Plan()
         {
-            WriteData.plan = Path.GetFileNameWithoutExtension(PathToPlan);
+            WriteData.Plan = Path.GetFileNameWithoutExtension(PathToPlan);
             XmlDocument doc = new XmlDocument();
             doc.Load(PathToPlan);
             XmlNodeList nodes = doc.ChildNodes;
-            list1 = ReadNodes(nodes);
+            TestActions = ReadNodes(nodes);
 
-            return list1;
+            return TestActions;
         }
+
+        #endregion
+
+        #region Properties
 
         public static string SetPathToPlan
         {
@@ -117,5 +125,7 @@ namespace Client_Side
                 PathToPlan = value;
             }
         }
+
+        #endregion
     }
 }

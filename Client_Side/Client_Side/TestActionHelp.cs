@@ -32,7 +32,9 @@ namespace Client_Side
 
         private static int Iteration;
 
-        private static bool Dur = true;
+        private static bool CheckDuration = true;
+
+        private static int ThreadsCount;
 
         //This variable is created to store count of attempts to locate element using LocateElement method.
         //Exception will be generated only in case when 5 attempts were failed.
@@ -150,39 +152,39 @@ namespace Client_Side
 
                     if (type == "1")
                     {
-                        tag = action.waitForTag;
-                        id = action.waitForId;
-                        inText = action.waitForInText;
-                        inTag = action.waitForInTag;
-                        inValue = action.waitForInValue;
-                        inLabel = action.waitForInLabel;
-                        title = action.waitForTitle;
-                        className = action.waitForClassName;
-                        xPath = action.waitForXPath;
+                        tag = action.WaitForTag;
+                        id = action.WaitForId;
+                        inText = action.WaitForInText;
+                        inTag = action.WaitForInTag;
+                        inValue = action.WaitForInValue;
+                        inLabel = action.WaitForInLabel;
+                        title = action.WaitForTitle;
+                        className = action.WaitForClassName;
+                        xPath = action.WaitForXPath;
                     }
                     else if (type == "2")
                     {
-                        tag = action.objectTag;
-                        id = action.objectId;
-                        inText = action.objectInText;
-                        inTag = action.objectInTag;
-                        inValue = action.objectInValue;
-                        inLabel = action.objectInLabel;
-                        title = action.objectTitle;
-                        className = action.objectClassName;
-                        xPath = action.objectXPath;
+                        tag = action.ObjectTag;
+                        id = action.ObjectId;
+                        inText = action.ObjectInText;
+                        inTag = action.ObjectInTag;
+                        inValue = action.ObjectInValue;
+                        inLabel = action.ObjectInLabel;
+                        title = action.ObjectTitle;
+                        className = action.ObjectClassName;
+                        xPath = action.ObjectXPath;
                     }
                     else
                     {
-                        tag = action.targetTag;
-                        id = action.targetId;
-                        inText = action.targetInText;
-                        inTag = action.targetInTag;
-                        inValue = action.targetInValue;
-                        inLabel = action.targetInLabel;
-                        title = action.targetTitle;
-                        className = action.targetClassName;
-                        xPath = action.targetXPath;
+                        tag = action.TargetTag;
+                        id = action.TargetId;
+                        inText = action.TargetInText;
+                        inTag = action.TargetInTag;
+                        inValue = action.TargetInValue;
+                        inLabel = action.TargetInLabel;
+                        title = action.TargetTitle;
+                        className = action.TargetClassName;
+                        xPath = action.TargetXPath;
                     }
 
                     if (tag != null)
@@ -379,7 +381,7 @@ namespace Client_Side
             {
                 DateTime now = DateTime.Now;
                 endOfTheTest = now.AddMinutes(value);
-                Program.ShowMessage("[INFO]\t Test will be ended at " + endOfTheTest.ToString());
+                Program.ShowMessageInConsole("[INFO]\t Test will be ended at " + endOfTheTest.ToString());
             }
         }
 
@@ -396,7 +398,7 @@ namespace Client_Side
             set
             {
                 Iteration = value;
-                Dur = false;
+                CheckDuration = false;
             }
         }
 
@@ -408,11 +410,27 @@ namespace Client_Side
             }
         }
 
-        public static bool GetDur
+        public static bool GetCheckDuration
         {
             get
             {
-                return Dur;
+                return CheckDuration;
+            }
+        }
+
+        public static int GetThreadsCount
+        {
+            get
+            {
+                return ThreadsCount;
+            }
+        }
+
+        public static int SetThreadsCount
+        {
+            set
+            {
+                ThreadsCount = value;
             }
         }
 
