@@ -80,7 +80,7 @@ namespace Client_Side
             return "";
         }
 
-        public static List<string> GetTimes(IWebDriver driver, string Name)
+        public static List<string> GetTimes(ref IWebDriver driver, string Name)
         {
             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
 
@@ -100,7 +100,7 @@ namespace Client_Side
             return result;
         }
 
-        public static List<string> GetWaitTime(IWebDriver driver, string Name, int time)
+        public static List<string> GetWaitTime(ref IWebDriver driver, string Name, int time)
         {
             List<string> result = new List<string>();
 
@@ -118,19 +118,19 @@ namespace Client_Side
             return result;
         }
 
-        public static void WaitForElement(IWebDriver driver, TestAction action)
+        public static void WaitForElement(ref IWebDriver driver, TestAction action)
         {
             IWebElement n = null;
             while (n==null)
             {
-                n = LocateElement(driver, action, "1");
+                n = LocateElement(ref driver, action, "1");
             }
         }
 
         //set type in "1" if you need to locate object for waiting
         //set type in "2" if you need to locate object for action
         //set type in "3" if you need to lcoate target object for moveTo command
-        public static IWebElement LocateElement(IWebDriver driver, TestAction action, string type)
+        public static IWebElement LocateElement(ref IWebDriver driver, TestAction action, string type)
         {
             countOfExceptions = 0;
 
@@ -334,7 +334,7 @@ namespace Client_Side
             return null;
         }
 
-        public static void MoveElementTo(IWebDriver driver, IWebElement source, IWebElement target)
+        public static void MoveElementTo(ref IWebDriver driver, IWebElement source, IWebElement target)
         {
             OpenQA.Selenium.Interactions.Actions action = new OpenQA.Selenium.Interactions.Actions(driver);            
             var mouse = ((IHasInputDevices) driver).Mouse;
@@ -343,7 +343,7 @@ namespace Client_Side
             mouse.MouseUp(loc.Coordinates);
         }
 
-        public static void SwitchTab(IWebDriver driver)
+        public static void SwitchTab(ref IWebDriver driver)
         {
             if (driver.WindowHandles.Count < 2)
             {

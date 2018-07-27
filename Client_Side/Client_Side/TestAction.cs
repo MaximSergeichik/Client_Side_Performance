@@ -19,6 +19,7 @@ namespace Client_Side
 
         public List<TestAction> InnerActions = new List<TestAction>();
 
+        private IWebDriver InternalDriver;
 
         public string Type { get; set; }
         public string InnerNodeText { get; set; }
@@ -84,11 +85,11 @@ namespace Client_Side
             }
         }
 
-        public void PerformAction()
+        public void PerformAction(ref IWebDriver IncomigDriver)
         {
+            InternalDriver = IncomigDriver;
             try
             {
-                IWebDriver driver = WebDriver.Driver;
                 switch (Type)
                 {
                     case "navigate":
@@ -99,21 +100,21 @@ namespace Client_Side
                                 {
                                     case "API":
                                         {
-                                            driver.Navigate().GoToUrl(InnerNodeText);
+                                            InternalDriver.Navigate().GoToUrl(InnerNodeText);
                                             if (Wait == "true")
                                             {
-                                                TestActionHelp.WaitForElement(driver, this);
+                                                TestActionHelp.WaitForElement(ref InternalDriver, this);
                                             }
-                                            WriteData.SendData(TestActionHelp.GetTimes(driver, Name));
+                                            WriteData.SendData(TestActionHelp.GetTimes(ref InternalDriver, Name));
                                             break;
                                         }
                                     case "Watch":
                                         {
                                             DateTime start = DateTime.Now;
-                                            driver.Navigate().GoToUrl(InnerNodeText);
+                                            InternalDriver.Navigate().GoToUrl(InnerNodeText);
                                             if (Wait == "true")
                                             {
-                                                TestActionHelp.WaitForElement(driver, this);
+                                                TestActionHelp.WaitForElement(ref InternalDriver, this);
                                             }
                                             DateTime end = DateTime.Now;
                                             int time = (int)(end - start).TotalMilliseconds;
@@ -124,17 +125,17 @@ namespace Client_Side
                             }
                             else
                             {
-                                driver.Navigate().GoToUrl(ObjectXPath);
+                                InternalDriver.Navigate().GoToUrl(ObjectXPath);
                                 if (Wait == "true")
                                 {
-                                    TestActionHelp.WaitForElement(driver, this);
+                                    TestActionHelp.WaitForElement(ref InternalDriver, this);
                                 }
                             }
                             break;
                         }
                     case "click":
                         {
-                            IWebElement el = TestActionHelp.LocateElement(driver, this, "2");
+                            IWebElement el = TestActionHelp.LocateElement(ref InternalDriver, this, "2");
                             if (Measure == "true")
                             {
                                 switch (MeasureType)
@@ -144,9 +145,9 @@ namespace Client_Side
                                             el.Click();
                                             if (Wait == "true")
                                             {
-                                                TestActionHelp.WaitForElement(driver, this);
+                                                TestActionHelp.WaitForElement(ref InternalDriver, this);
                                             }
-                                            WriteData.SendData(TestActionHelp.GetTimes(driver, Name));
+                                            WriteData.SendData(TestActionHelp.GetTimes(ref InternalDriver, Name));
                                             break;
                                         }
                                     case "Watch":
@@ -155,7 +156,7 @@ namespace Client_Side
                                             el.Click();
                                             if (Wait == "true")
                                             {
-                                                TestActionHelp.WaitForElement(driver, this);
+                                                TestActionHelp.WaitForElement(ref InternalDriver, this);
                                             }
                                             DateTime end = DateTime.Now;
                                             int time = (int)(end - start).TotalMilliseconds;
@@ -169,14 +170,14 @@ namespace Client_Side
                                 el.Click();
                                 if (Wait == "true")
                                 {
-                                    TestActionHelp.WaitForElement(driver, this);
+                                    TestActionHelp.WaitForElement(ref InternalDriver, this);
                                 }
                             }
                             break;
                         }
                     case "sendKeys":
                         {
-                            IWebElement el = TestActionHelp.LocateElement(driver, this, "2");
+                            IWebElement el = TestActionHelp.LocateElement(ref InternalDriver, this, "2");
                             if (Measure == "true")
                             {
                                 switch (MeasureType)
@@ -186,9 +187,9 @@ namespace Client_Side
                                             el.SendKeys(Text);
                                             if (Wait == "true")
                                             {
-                                                TestActionHelp.WaitForElement(driver, this);
+                                                TestActionHelp.WaitForElement(ref InternalDriver, this);
                                             }
-                                            WriteData.SendData(TestActionHelp.GetTimes(driver, Name));
+                                            WriteData.SendData(TestActionHelp.GetTimes(ref InternalDriver, Name));
                                             break;
                                         }
                                     case "Watch":
@@ -197,7 +198,7 @@ namespace Client_Side
                                             el.SendKeys(Text);
                                             if (Wait == "true")
                                             {
-                                                TestActionHelp.WaitForElement(driver, this);
+                                                TestActionHelp.WaitForElement(ref InternalDriver, this);
                                             }
                                             DateTime end = DateTime.Now;
                                             int time = (int)(end - start).TotalMilliseconds;
@@ -211,7 +212,7 @@ namespace Client_Side
                                 el.SendKeys(Text);
                                 if (Wait == "true")
                                 {
-                                    TestActionHelp.WaitForElement(driver, this);
+                                    TestActionHelp.WaitForElement(ref InternalDriver, this);
                                 }
                             }
                             break;
@@ -224,21 +225,21 @@ namespace Client_Side
                                 {
                                     case "API":
                                         {
-                                            driver.Navigate().Refresh();
+                                            InternalDriver.Navigate().Refresh();
                                             if (Wait == "true")
                                             {
-                                                TestActionHelp.WaitForElement(driver, this);
+                                                TestActionHelp.WaitForElement(ref InternalDriver, this);
                                             }
-                                            WriteData.SendData(TestActionHelp.GetTimes(driver, Name));
+                                            WriteData.SendData(TestActionHelp.GetTimes(ref InternalDriver, Name));
                                             break;
                                         }
                                     case "Watch":
                                         {
                                             DateTime start = DateTime.Now;
-                                            driver.Navigate().Refresh();
+                                            InternalDriver.Navigate().Refresh();
                                             if (Wait == "true")
                                             {
-                                                TestActionHelp.WaitForElement(driver, this);
+                                                TestActionHelp.WaitForElement(ref InternalDriver, this);
                                             }
                                             DateTime end = DateTime.Now;
                                             int time = (int)(end - start).TotalMilliseconds;
@@ -249,17 +250,17 @@ namespace Client_Side
                             }
                             else
                             {
-                                driver.Navigate().Refresh();
+                                InternalDriver.Navigate().Refresh();
                                 if (Wait == "true")
                                 {
-                                    TestActionHelp.WaitForElement(driver, this);
+                                    TestActionHelp.WaitForElement(ref InternalDriver, this);
                                 }
                             }
                             break;
                         }
                     case "wait":
                         {
-                            TestActionHelp.WaitForElement(driver, this);
+                            TestActionHelp.WaitForElement(ref InternalDriver, this);
                             break;
                         }
                     case "for":
@@ -267,26 +268,26 @@ namespace Client_Side
                             int count = Int32.Parse(Iterations);
                             for (int i = 0; i < count; i++)
                             {
-                                InnerActions.ForEach(k => k.PerformAction());
+                                InnerActions.ForEach(action => action.PerformAction(ref InternalDriver));                    
                                 Console.WriteLine(i);
                             }
                             break;
                         }
                     case "if":
                         {
-                            IWebElement n = TestActionHelp.LocateElement(driver, this, "2");
+                            IWebElement n = TestActionHelp.LocateElement(ref InternalDriver, this, "2");
                             if (Value != null)
                             {
                                 if (n.GetAttribute("value").Equals(Value))
                                 {
-                                    InnerActions.ForEach(i => i.PerformAction());
+                                    InnerActions.ForEach(action => action.PerformAction(ref InternalDriver));
                                 }
                             }
                             if (Text != null)
                             {
                                 if (n.Text.Contains(Text))
                                 {
-                                    InnerActions.ForEach(i => i.PerformAction());
+                                    InnerActions.ForEach(action => action.PerformAction(ref InternalDriver));
                                 }
                             }
                             break;
@@ -300,48 +301,48 @@ namespace Client_Side
                         {
                             if (Text != "parent")
                             {
-                                IWebElement n = TestActionHelp.LocateElement(driver, this, "2");
-                                driver.SwitchTo().Frame(n);
+                                IWebElement n = TestActionHelp.LocateElement(ref InternalDriver, this, "2");
+                                InternalDriver.SwitchTo().Frame(n);
                                 if (Wait == "true")
                                 {
-                                    TestActionHelp.WaitForElement(driver, this);
+                                    TestActionHelp.WaitForElement(ref InternalDriver, this);
                                 }
                             }
                             else
                             {
-                                driver.SwitchTo().ParentFrame();
+                                InternalDriver.SwitchTo().ParentFrame();
                                 if (Wait == "true")
                                 {
-                                    TestActionHelp.WaitForElement(driver, this);
+                                    TestActionHelp.WaitForElement(ref InternalDriver, this);
                                 }
                             }
                             break;
                         }
                     case "moveTo":
                         {
-                            IWebElement source = TestActionHelp.LocateElement(driver, this, "2");
-                            IWebElement target = TestActionHelp.LocateElement(driver, this, "3");
+                            IWebElement source = TestActionHelp.LocateElement(ref InternalDriver, this, "2");
+                            IWebElement target = TestActionHelp.LocateElement(ref InternalDriver, this, "3");
                             if (Measure == "true")
                             {
                                 switch (MeasureType)
                                 {
                                     case "API":
                                         {
-                                            TestActionHelp.MoveElementTo(driver, source, target);
+                                            TestActionHelp.MoveElementTo(ref InternalDriver, source, target);
                                             if (Wait == "true")
                                             {
-                                                TestActionHelp.WaitForElement(driver, this);
+                                                TestActionHelp.WaitForElement(ref InternalDriver, this);
                                             }
-                                            WriteData.SendData(TestActionHelp.GetTimes(driver, Name));
+                                            WriteData.SendData(TestActionHelp.GetTimes(ref InternalDriver, Name));
                                             break;
                                         }
                                     case "Watch":
                                         {
-                                            TestActionHelp.MoveElementTo(driver, source, target);
+                                            TestActionHelp.MoveElementTo(ref InternalDriver, source, target);
                                             DateTime start = DateTime.Now;                                            
                                             if (Wait == "true")
                                             {
-                                                TestActionHelp.WaitForElement(driver, this);
+                                                TestActionHelp.WaitForElement(ref InternalDriver, this);
                                             }
                                             DateTime end = DateTime.Now;
                                             int time = (int)(end - start).TotalMilliseconds;
@@ -352,20 +353,20 @@ namespace Client_Side
                             }
                             else
                             {
-                                TestActionHelp.MoveElementTo(driver, source, target);
+                                TestActionHelp.MoveElementTo(ref InternalDriver, source, target);
                                 if (Wait == "true")
                                 {
-                                    TestActionHelp.WaitForElement(driver, this);
+                                    TestActionHelp.WaitForElement(ref InternalDriver, this);
                                 }
                             }
                             break;
                         }
                     case "switchTab":
                         {
-                            TestActionHelp.SwitchTab(driver);
+                            TestActionHelp.SwitchTab(ref InternalDriver);
                             if (Wait == "true")
                             {
-                                TestActionHelp.WaitForElement(driver, this);
+                                TestActionHelp.WaitForElement(ref InternalDriver, this);
                             }
                             break;
                         }

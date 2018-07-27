@@ -13,6 +13,9 @@ namespace Client_Side
 {
     class Program
     {
+
+        public static DateTime start_timestamp;
+
         public static void ShowMessageInConsole(string s)
         {
             Console.WriteLine(s);
@@ -21,7 +24,12 @@ namespace Client_Side
         public static void WriteLog(string s)
         {
             string path = WriteData.GetPathToFile;
-            File.AppendAllText(path+"/ClientSideLog.txt", s + "\n");
+            string pathToLog = String.Format("{0}/ClientSideLog_{1:yyyyMMdd-HHmmss}", path, start_timestamp);
+            if (!File.Exists(pathToLog))
+            {
+                File.Create(pathToLog);
+            }
+            File.AppendAllText(pathToLog, s + "\n");
         }
 
         //public static void RunTest(List<TestAction> plan)
@@ -47,6 +55,8 @@ namespace Client_Side
             //by default flag is in true
             //if tool receive some exception on the step of check of command line arguments flag will be set in false and test will be not started
             bool flag = true;
+
+            start_timestamp = DateTime.Now;
             try
             {
                 //path to config file
@@ -64,21 +74,19 @@ namespace Client_Side
                 {
                     flag = false;
                     ShowMessageInConsole(String.Format("Unable to parse folder for logs. Please, read help. \nClient_Side.exe --help"));
-                    Console.WriteLine(ex);
+                    ShowMessageInConsole(ex.ToString());
                 }
                 
-
+                string browser = "chrome";
                 try
                 {
-                    string browser = "chrome";
                     //string browser = args[1];
-                    WebDriver.browser = browser;
                 }
                 catch (Exception ex)
                 {
                     ShowMessageInConsole(String.Format("Unable to parse browser for work. Please, read help. \nClient_Side.exe --help"));
                     flag = false;
-                    Console.WriteLine(ex);
+                    ShowMessageInConsole(ex.ToString());
                 }
 
                 if (ParseConfigs.ParseConfigFile(path) && flag)
@@ -93,16 +101,16 @@ namespace Client_Side
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex);
+                        ShowMessageInConsole(ex.ToString());
                     }
 
                     List<TestAction> Plan = ParsePlan.Plan();
-                    Console.WriteLine("Test Plan Parsed");
+                    ShowMessageInConsole("Test Plan Parsed");
                     
-                    TestThreads Test = new TestThreads(TestActionHelp.GetThreadsCount, Plan);
+                    TestThreads Test = new TestThreads(TestActionHelp.GetThreadsCount, Plan, browser);
+                    Test.Start();
                     if (TestActionHelp.GetCheckDuration)
                     {
-                        Test.Start();
                         while (DateTime.Now<TestActionHelp.GetEndTime)
                         {
                             Thread.Sleep(60000);
@@ -124,17 +132,15 @@ namespace Client_Side
                         }
                     }
 
-                }    
-                end:
+                }
+            end:
                 ShowMessageInConsole("Test was ended.");
                 Console.ReadKey();
                 return 0;
             }
             catch (Exception ex)
             {
-                WebDriver.Driver.Close();
-                Console.WriteLine(ex);
-                Console.WriteLine("[ERROR]\tMiss command line argument with config file path!");
+                ShowMessageInConsole(ex.ToString());
                 return 1;
             }
         }

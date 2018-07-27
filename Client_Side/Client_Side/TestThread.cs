@@ -12,23 +12,15 @@ namespace Client_Side
     {
         #region Data
 
-        private List<TestAction> Plan;
+        private TestPlan Test;
         private string ThreadName;
         private int IterationsCount;
-        private Thread th;
+        private Thread th;        
 
         #endregion
-
+        
         #region Properties
-
-        public List<TestAction> SetPlan
-        {
-            set
-            {
-                Plan = value;
-            }
-        }
-
+        
         public int GetIterationsCount
         {
             get
@@ -57,12 +49,14 @@ namespace Client_Side
 
         #region Methods
 
-        public TestThread(string ThreadName)
+        public TestThread(string ThreadName, List<TestAction> TestPlan, string browser)
         {
             IterationsCount = 0;
             this.ThreadName = ThreadName;
             th = new Thread(() => RunTest());
             th.Name = this.ThreadName;
+            Test = new TestPlan(TestPlan);
+            Test.SetBrowser = browser;
         }
 
         public void Start()
@@ -72,29 +66,30 @@ namespace Client_Side
         
         public void Abort()
         {
+            Test.StopTest();
             th.Abort();
         }
 
         public void RunTest()
         {
+        Start:
             try
             {
-            Start:
                 if ((!TestActionHelp.GetCheckDuration && IterationsCount != TestActionHelp.GetIteration) || (TestActionHelp.GetCheckDuration))
                 {
-                    Plan.ForEach(j => j.PerformAction());
+                    Test.ExecuteTest();
                     IterationsCount += 1;
                     File.WriteAllText(Directory.GetCurrentDirectory() + "/temp/" + ThreadName, IterationsCount.ToString());
                     goto Start;
                 }
             }
-            catch (ThreadAbortException ex)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Program.ShowMessageInConsole(ex.ToString());
                 Program.WriteLog(String.Format("Thread {0} was aboarted due the following error:\n{1}\nStackTrace:\n\t{2}", ThreadName, ex.Message, ex.StackTrace));
-                WebDriver.Close();
-                File.Delete(Directory.GetCurrentDirectory() + "/temp/" + ThreadName);
+                goto Start;
             }
+
         }
 
         #endregion

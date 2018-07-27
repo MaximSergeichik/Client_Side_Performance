@@ -29,14 +29,14 @@ namespace Client_Side
 
         #region Methods
 
-        public TestThreads(int threadsCount, List<TestAction> plan)
+        public TestThreads(int threadsCount, List<TestAction> plan, string Browser)
         {
             ThreadsCount = threadsCount;
+            Threads = new List<TestThread>();
             for(int i=0;i<ThreadsCount;i++)
             {
                 string name = String.Format("TestThread{0}", i);
-                TestThread thread = new TestThread(name);
-                thread.SetPlan = plan;
+                TestThread thread = new TestThread(name, plan, Browser);
                 Threads.Add(thread);
             }
         }

@@ -12,50 +12,50 @@ namespace Client_Side
 {
     //Singleton implementation for IWebDriver
 
-    class WebDriver
-    {
-        private WebDriver() { }
+    //class WebDriver
+    //{
+    //    private WebDriver() { }
 
-        private static IWebDriver driver;
+    //    private static IWebDriver driver;
 
-        public static string browser;
+    //    public static string browser;
 
-        public static IWebDriver Driver
-        {
-            get
-            {
-                if (driver==null)
-                {
-                    switch(browser)
-                    {
-                        case "chrome":
-                            {
-                                ChromeOptions options = new ChromeOptions();
-                                options.AddArgument("--start-maximized");
+    //    public static IWebDriver Driver
+    //    {
+    //        get
+    //        {
+    //            if (driver==null)
+    //            {
+    //                switch(browser)
+    //                {
+    //                    case "chrome":
+    //                        {
+    //                            ChromeOptions options = new ChromeOptions();
+    //                            options.AddArgument("--start-maximized");
 
-                                options.AddUserProfilePreference("cacheDisabled", true);
+    //                            options.AddUserProfilePreference("cacheDisabled", true);
 
-                                driver = new ChromeDriver(options);
-                                driver.Manage().Cookies.DeleteAllCookies();
-                                driver.Manage().Window.Maximize();
-                                break;
-                            }
-                        case "firefox":
-                            {
-                                driver = new FirefoxDriver();
-                                driver.Manage().Cookies.DeleteAllCookies();
-                                break;
-                            }
-                    }
-                }
-                return driver;
-            }
-        }
+    //                            driver = new ChromeDriver(options);
+    //                            driver.Manage().Cookies.DeleteAllCookies();
+    //                            driver.Manage().Window.Maximize();
+    //                            break;
+    //                        }
+    //                    case "firefox":
+    //                        {
+    //                            driver = new FirefoxDriver();
+    //                            driver.Manage().Cookies.DeleteAllCookies();
+    //                            break;
+    //                        }
+    //                }
+    //            }
+    //            return driver;
+    //        }
+    //    }
 
-        public static void Close()
-        {
-            driver.Close();
-            driver = null;
-        }
-    }
+    //    public static void Close()
+    //    {
+    //        driver.Close();
+    //        driver = null;
+    //    }
+    //}
 }
