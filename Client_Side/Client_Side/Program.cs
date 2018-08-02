@@ -88,8 +88,7 @@ namespace Client_Side
                     }
 
                     List<TestAction> Plan = ParsePlan.Plan();
-                    ShowMessageInConsole("Test Plan Parsed");
-                    Logger.WriteLog("Test Plan Parsed", "info");
+                    ShowMessageInConsole("Test Plan Parsed");                    
                     
                     TestThreads testThreads = new TestThreads(TestActionHelp.GetThreadsCount, Plan, browser);
                     testThreads.Start();
@@ -99,14 +98,13 @@ namespace Client_Side
                         {
                             Thread.Sleep(60000);
                         }
-                        //Test.Abort();
+                        testThreads.Abort();
                     }
                     else
                     {
                     notend:
-                        Thread.Sleep(60000);
-                        int countOfAbortedThreads = testThreads.GetStateOfAllThreads().Select(t => t.Value.Equals(ThreadState.Aborted)).Count();
-                        if (countOfAbortedThreads == TestActionHelp.GetThreadsCount)
+                        Thread.Sleep(2000);
+                        if (testThreads.GetCountOfAbortedThreads() == TestActionHelp.GetThreadsCount)
                         {
                             goto end;
                         }

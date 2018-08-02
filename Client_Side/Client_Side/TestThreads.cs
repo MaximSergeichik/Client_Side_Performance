@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Client_Side
 {
@@ -56,6 +56,19 @@ namespace Client_Side
             Dictionary<string, string> result = new Dictionary<string, string>();
             Threads.ForEach(t => result.Add(t.GetThreadName, t.GetThreadState));
             return result;
+        }
+
+        public int GetCountOfAbortedThreads()
+        {
+            int i = 0;
+            foreach(var a in Threads)
+            {
+                if ((a.GetThreadState == ThreadState.Aborted.ToString()) || (a.GetThreadState == ThreadState.Stopped.ToString()))
+                {
+                    i++;
+                }
+            }
+            return i;
         }
 
         #endregion

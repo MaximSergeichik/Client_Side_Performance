@@ -60,7 +60,6 @@ namespace Client_Side
             th.Priority = ThreadPriority.Highest;
             th.Name = this.ThreadName;
             Test = new TestPlan(TestPlan);
-            driver = Test.InitiateWebDriver(browser);
             Browser = browser;
         }
 
@@ -72,7 +71,7 @@ namespace Client_Side
         public void Abort()
         {
             Test.StopTest();
-            //th.Abort();
+            th.Abort();
         }
 
         public void RunTest()
@@ -80,11 +79,22 @@ namespace Client_Side
         Start:
             try
             {
-                if ((!TestActionHelp.GetCheckDuration && IterationsCount != TestActionHelp.GetIteration) || (TestActionHelp.GetCheckDuration))
+                if (TestActionHelp.GetCheckDuration)
                 {
+                    driver = Test.InitiateWebDriver(Browser);
+                    Test.ExecuteTest(driver);
+                    File.WriteAllText(Directory.GetCurrentDirectory() + "/temp/" + ThreadName, IterationsCount.ToString());
+                    IterationsCount += 1;
+                    Program.ShowMessageInConsole(String.Format("Thread {0} iteration {1} was finished", th.Name, IterationsCount));
+                    goto Start;
+                }
+                else if (!TestActionHelp.GetCheckDuration && IterationsCount != TestActionHelp.GetIteration)
+                {
+                    driver = Test.InitiateWebDriver(Browser);
                     Test.ExecuteTest(driver);
                     IterationsCount += 1;
                     File.WriteAllText(Directory.GetCurrentDirectory() + "/temp/" + ThreadName, IterationsCount.ToString());
+                    Program.ShowMessageInConsole(String.Format("Thread {0} iteration {1} was finished", th.Name, IterationsCount));
                     goto Start;
                 }
                 else
@@ -92,10 +102,14 @@ namespace Client_Side
                     this.Abort();
                 }
             }
+            catch (ThreadAbortException ex)
+            {
+                Logger.WriteLog(String.Format("Thread {0} was aboarted due the following error:\n{1}\nStackTrace:\n\t{2}", ThreadName, ex.Message, ex.StackTrace), "error");
+            }
             catch (Exception ex)
             {
-                Program.ShowMessageInConsole(ex.ToString());
-                Logger.WriteLog(String.Format("Thread {0} was aboarted due the following error:\n{1}\nStackTrace:\n\t{2}", ThreadName, ex.Message, ex.StackTrace), "error");
+                Logger.WriteLog(ex.Message, "error");
+                Logger.WriteLog(ex.StackTrace, "error");
                 goto Start;
             }
 
