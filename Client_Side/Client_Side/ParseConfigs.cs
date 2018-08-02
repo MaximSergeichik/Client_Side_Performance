@@ -30,14 +30,23 @@ namespace Client_Side
 
             if (data.Keys.Contains("User"))
             {
-                Program.ShowMessageInConsole("[INFO]\t'User' was read successfully\n");
+                Program.ShowMessageInConsole("'User' was read successfully");
                 TestAction.Creditianals = data["User"];
             }
             
 
+            if (data.Keys.Contains("LogPath"))
+            {
+                if (!Directory.Exists(data["LogPath"]))
+                {
+                    Directory.CreateDirectory(data["LogPath"]);
+                }
+                Logger.SetLogFilePath = data["LogPath"];
+            }
+
             if (data.Keys.Contains("CheckUrl"))
             {
-                Program.ShowMessageInConsole("[INFO]\t'CheckUrl' was read successfully\n");
+                Program.ShowMessageInConsole("'CheckUrl' was read successfully");
                 if (data["CheckUrl"].Contains(','))
                 {
                     foreach (var url in data["CheckUrl"].Split(','))
@@ -60,62 +69,104 @@ namespace Client_Side
             if (data.Keys.Contains("WriteMode"))
             {
                 WriteData.SetWriteMode = data["WriteMode"];
-                Program.ShowMessageInConsole("[INFO]\t'WriteMode' was read successfully\n");
-                if ((data["WriteMode"] == "1") || (data["WriteMode"] == "2"))
-                {
-                    try
-                    {
-                        WriteData.SetUrl = data["ServerUrl"];
-                        //Tables.SetUrl = data["ServerUrl"];
-                        Program.ShowMessageInConsole("[INFO]\t'ServerUrl' was read successfully\n");
-                        if (!WriteData.PingServerAndPort())
-                        {
-                            return false;
-                        }
-                    }
-                    catch
-                    {
-                        Program.ShowMessageInConsole("[ERROR]\tParameter 'ServerUrl' wasn't found in config file but it's required!!!");
-                        return false;
-                    }
+                Program.ShowMessageInConsole("'WriteMode' was read successfully");
 
-                    try
-                    {
-                        WriteData.SetDBName = data["DBName"];
-                        Program.ShowMessageInConsole("[INFO]\t'DBName' was read successfully\n");
-                    }
-                    catch
-                    {
-                        Program.ShowMessageInConsole("[ERROR]\tParameter 'DBName' wasn't found in config file but it's required!!!");
-                        return false;
-                    }
+                switch(data["WriteMode"])
+                {
+                    case "0":
+                        {
+                            if (data.ContainsKey("OutputFolderPath"))
+                            {
+                                if (!Directory.Exists(data["OutputFolderPath"]))
+                                {
+                                    Directory.CreateDirectory(data["OutputFolderPath"]);
+                                }
+                                DateTime d = DateTime.Now;
+                                string s = String.Format("\\ClientSide_{0:yyyyyMMdd-HHmmss}.log",d);
+                                WriteData.PathToResultsFile = data["OutputFolderPath"] + s;
+                                Program.ShowMessageInConsole(String.Format("Result File will be stored here - {0}", WriteData.PathToResultsFile));
+                            }
+                            else
+                            {
+                                DateTime d = DateTime.Now;
+                                string s = String.Format("\\ClientSide_{0:yyyyyMMdd-HHmmss}.log", d);
+                                WriteData.PathToResultsFile = Directory.GetCurrentDirectory() + s;
+                                Program.ShowMessageInConsole(String.Format("Result File will be stored here - {0}", WriteData.PathToResultsFile));
+                            }
+                            break;
+                        }
+                    case "1":
+                        {
+                            WriteData.SetUrl = data["ServerUrl"];
+                            //Tables.SetUrl = data["ServerUrl"];
+                            Program.ShowMessageInConsole("'ServerUrl' was read successfully");
+                            if (!WriteData.PingServerAndPort())
+                            {
+                                return false;
+                            }
+                            WriteData.SetDBName = data["DBName"];
+                            Program.ShowMessageInConsole("'DBName' was read successfully");
+                            break;
+                        }
+                    case "2":
+                        {
+                            if (data.ContainsKey("OutputFolderPath"))
+                            {
+                                if (!Directory.Exists(data["OutputFolderPath"]))
+                                {
+                                    Directory.CreateDirectory(data["OutputFolderPath"]);
+                                }
+                                DateTime d = DateTime.Now;
+                                string s = String.Format("\\ClientSide_{0:yyyyyMMdd-HHmmss}.log", d);
+                                WriteData.PathToResultsFile = data["OutputFolderPath"] + s;
+                                Program.ShowMessageInConsole(String.Format("Result File will be stored here - {0}", WriteData.PathToResultsFile));
+                            }
+                            else
+                            {
+                                DateTime d = DateTime.Now;
+                                string s = String.Format("\\ClientSide_{0:yyyyyMMdd-HHmmss}.log", d);
+                                WriteData.PathToResultsFile = Directory.GetCurrentDirectory() + s;
+                                Program.ShowMessageInConsole(String.Format("Result File will be stored here - {0}", WriteData.PathToResultsFile));
+                            }
+                            WriteData.SetUrl = data["ServerUrl"];
+                            //Tables.SetUrl = data["ServerUrl"];
+                            Program.ShowMessageInConsole("'ServerUrl' was read successfully");
+                            if (!WriteData.PingServerAndPort())
+                            {
+                                return false;
+                            }
+                            WriteData.SetDBName = data["DBName"];
+                            Program.ShowMessageInConsole("'DBName' was read successfully");
+                            break;
+                        }
+
                 }
             }
             else
             {
                 WriteData.SetWriteMode = "0";
-                Program.ShowMessageInConsole("[INFO]\t'WriteMode' parameter was set to default value = 0\n");
+                Program.ShowMessageInConsole("'WriteMode' parameter was set to default value = 0");
             }
 
             try
             {
                 TestActionHelp.SetLocation = data["Location"];
-                Program.ShowMessageInConsole("[INFO]\t'Location' was read successfully\n");
+                Program.ShowMessageInConsole("'Location' was read successfully");
             }
             catch
             {
-                Program.ShowMessageInConsole("[ERROR]\tParameter 'Location' wasn't found in config file but it's required!!!");
+                Program.ShowMessageInConsole("Parameter 'Location' wasn't found in config file but it's required!!!");
                 return false;
             }
 
             try
             {
                 ParsePlan.SetPathToPlan = data["TestPlan"];
-                Program.ShowMessageInConsole("[INFO]\t'TestPlan' was read successfully\n");
+                Program.ShowMessageInConsole("'TestPlan' was read successfully");
             }
             catch
             {
-                Program.ShowMessageInConsole("[ERROR]\tParameter 'TestPlan' wasn't found in config file but it's required!!!");
+                Program.ShowMessageInConsole("Parameter 'TestPlan' wasn't found in config file but it's required!!!");
                 return false;
             }
 
@@ -123,28 +174,28 @@ namespace Client_Side
             {
                 TestActionHelp.SetEndTime = Convert.ToInt32(data["Duration"]);
 
-                Program.ShowMessageInConsole("[INFO]\tParameter 'Duration' was read successfully\n");
+                Program.ShowMessageInConsole("Parameter 'Duration' was read successfully");
             }
             else if (data.Keys.Contains("IterationCount"))
             {
                 TestActionHelp.SetIteration = Convert.ToInt32(data["IterationCount"]);
-                Program.ShowMessageInConsole("[INFO]\tParameter 'IterationCount' was read successfully\n");
+                Program.ShowMessageInConsole("Parameter 'IterationCount' was read successfully");
             }
             else
             {
-                Program.ShowMessageInConsole("[ERROR]\tNo one from this parameters: 'Duration' or 'IterationCount' were not found in config file but it's required!!!");
+                Program.ShowMessageInConsole("No one from this parameters: 'Duration' or 'IterationCount' were not found in config file but it's required!!!");
                 return false;
             }
 
             if (data.Keys.Contains("Threads"))
             {
                 TestActionHelp.SetThreadsCount = Convert.ToInt32(data["Threads"]);
-                Program.ShowMessageInConsole("[INFO]\tParameter 'Threads' was read successfully\n");
+                Program.ShowMessageInConsole("Parameter 'Threads' was read successfully");
             }
             else
             {
                 TestActionHelp.SetThreadsCount = 1;
-                Program.ShowMessageInConsole("[INFO]\tParameter 'Threads' was set to default value which is equal to 1\n");
+                Program.ShowMessageInConsole("Parameter 'Threads' was set to default value which is equal to 1");
             }
 
 

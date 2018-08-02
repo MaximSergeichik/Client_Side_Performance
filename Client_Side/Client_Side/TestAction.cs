@@ -375,8 +375,8 @@ namespace Client_Side
             }
             catch (Exception ex)
             {
-                Program.WriteLog(ex.Message);
-                Program.WriteLog(this.Type + " " + this.Name);
+                string s = String.Format("{0} error received on the following transaction: {1} - {2}.", ex.Message, this.Type, this.Name);
+                Logger.WriteLog(s,"error");
             }
         }
 

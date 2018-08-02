@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using OpenQA.Selenium;
 using System.Web;
 using System.Text.RegularExpressions;
@@ -324,6 +324,7 @@ namespace Client_Side
                     if (countOfExceptions < 4)
                     {
                         countOfExceptions++;
+                        Thread.Sleep(500);
                     }
                     else
                     {
@@ -347,7 +348,7 @@ namespace Client_Side
         {
             if (driver.WindowHandles.Count < 2)
             {
-                Program.WriteLog("Unable to switch tab. Only one tab is opened in browser.");
+                Logger.WriteLog("Unuble to switch tab in browser since only one tab is opened in browser", "error");
             }
             else
             {

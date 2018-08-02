@@ -28,7 +28,7 @@ namespace Client_Side
             Plan = plan;            
         }
 
-        private void InitiateWebDriver()
+        public IWebDriver InitiateWebDriver(string Browser)
         {
             switch (Browser)
             {
@@ -51,30 +51,19 @@ namespace Client_Side
                         break;
                     }
             }
+            return Driver;
         }
 
-        public void ExecuteTest()
+        public void ExecuteTest(IWebDriver driver)
         {
-            InitiateWebDriver();
+            Driver = driver;
             Plan.ForEach(action => action.PerformAction(ref Driver));
-            Driver.Close();
+            Driver.Quit();
         }
 
         public void StopTest()
         {
-            Driver.Close();
-        }
-
-        #endregion
-
-        #region Properties
-
-        public string SetBrowser
-        {
-            set
-            {
-                Browser = value;
-            }
+            Driver.Quit();
         }
 
         #endregion

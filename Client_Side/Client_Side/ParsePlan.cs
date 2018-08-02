@@ -105,7 +105,6 @@ namespace Client_Side
 
         public static List<TestAction> Plan()
         {
-            WriteData.Plan = Path.GetFileNameWithoutExtension(PathToPlan);
             XmlDocument doc = new XmlDocument();
             doc.Load(PathToPlan);
             XmlNodeList nodes = doc.ChildNodes;

@@ -26,7 +26,8 @@ namespace Client_Side
             }
             catch (Exception ex)
             {
-                Program.WriteLog(ex.Message);
+                Logger.WriteLog(ex.Message, "error");
+                Logger.WriteLog(ex.StackTrace, "error");
             }
         }
 

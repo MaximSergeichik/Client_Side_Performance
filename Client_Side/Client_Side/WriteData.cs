@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,19 +15,11 @@ namespace Client_Side
 
         #region Data
 
-        private static FileStream Stream;
-
         private static string Url;
 
         private static string WriteMode;
 
-        private static string PathToFile;
-
-        private static bool IsFile = false;
-
-        private static string FilePath;
-
-        public static string Plan;
+        private static string PathToResults;
 
 
         #endregion
@@ -35,13 +28,6 @@ namespace Client_Side
 
         public static void SendData(List<string> data)
         {
-            if ((WriteMode == "0") || (WriteMode == "2"))
-            {
-                if (!IsFile)
-                {
-                    CreateResultFile();
-                }
-            }
             try
             {
                 switch (WriteMode)
@@ -51,25 +37,18 @@ namespace Client_Side
                     case "2": { WriteDataInFile(data); WriteDataToInfluxDB(data); break; }
                 }
             }
-            catch
-            { }
+            catch(Exception ex)
+            {
+                Logger.WriteLog(ex.Message, "error");
+                Logger.WriteLog(ex.StackTrace, "error");
+            }
         }
 
         public static bool PingServerAndPort()
         {
             return PingUtil.Ping(Url, false);
         }
-
-        private static void CreateResultFile()
-        {
-            string time = String.Format("{0:yyyyddMM_HHmmss}_{1}", DateTime.Now, Plan).ToString();
-            string path = PathToFile + time + ".txt";
-            Stream = File.Create(path);
-            Stream.Close();
-            FilePath = path;
-            IsFile = true;
-        }
-
+        
         private static void WriteDataToInfluxDB(List<string> data)
         {
             try
@@ -78,13 +57,29 @@ namespace Client_Side
             }
             catch (Exception ex)
             {
-                Program.WriteLog(ex.Message);
+                Logger.WriteLog(ex.Message,"error");
+                Logger.WriteLog(ex.StackTrace, "error");
             }
         }
 
         private static void WriteDataInFile(List<string> data)
         {
-            File.AppendAllLines(FilePath, data);
+            int i=0;
+        m: try
+            {
+                File.AppendAllLines(PathToResultsFile, data);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex.Message, "error");
+                Logger.WriteLog(ex.StackTrace, "error");
+                Logger.WriteLog(String.Format("{0} attempt was failed", i), "info");
+                if (i < 3)
+                {
+                    i++;
+                    goto m;
+                }                    
+            }
         }
 
         #endregion
@@ -115,27 +110,15 @@ namespace Client_Side
             }
         }
 
-        public static string SetPathToFile
-        {
-            set
-            {
-                if (Directory.Exists(value) || Directory.GetCurrentDirectory().Contains(value))
-                {
-                    PathToFile = value;
-                }
-                else
-                {
-                    Directory.CreateDirectory(value);
-                    PathToFile = value;
-                }
-            }
-        }
-
-        public static string GetPathToFile
+        public static string PathToResultsFile
         {
             get
             {
-                return PathToFile;
+                return PathToResults;
+            }
+            set
+            {
+                PathToResults = value;
             }
         }
 

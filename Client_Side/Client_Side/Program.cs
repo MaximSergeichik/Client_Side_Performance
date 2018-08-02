@@ -19,17 +19,7 @@ namespace Client_Side
         public static void ShowMessageInConsole(string s)
         {
             Console.WriteLine(s);
-        }
-
-        public static void WriteLog(string s)
-        {
-            string path = WriteData.GetPathToFile;
-            string pathToLog = String.Format("{0}/ClientSideLog_{1:yyyyMMdd-HHmmss}", path, start_timestamp);
-            if (!File.Exists(pathToLog))
-            {
-                File.Create(pathToLog);
-            }
-            File.AppendAllText(pathToLog, s + "\n");
+            Logger.WriteLog(s, "info");
         }
 
         //public static void RunTest(List<TestAction> plan)
@@ -50,7 +40,7 @@ namespace Client_Side
         //    }
         //}
 
-        static int Main(string[] args)
+        static void Main(string[] args)
         {
             //by default flag is in true
             //if tool receive some exception on the step of check of command line arguments flag will be set in false and test will be not started
@@ -64,18 +54,6 @@ namespace Client_Side
                 string path = @"D:\Perfomance\ClientSide\Client_Side_Performance\Configs\config_HM.properties";
                 ShowMessageInConsole(String.Format("Start work with {0} config file", path));
 
-                try
-                {
-                    //string PathToLogs = args[2];
-                    string PathToLogs = @"D:\Perfomance\ClientSide\Client_Side_Performance\Results\";
-                    WriteData.SetPathToFile = PathToLogs;
-                }
-                catch(Exception ex)
-                {
-                    flag = false;
-                    ShowMessageInConsole(String.Format("Unable to parse folder for logs. Please, read help. \nClient_Side.exe --help"));
-                    ShowMessageInConsole(ex.ToString());
-                }
                 
                 string browser = "chrome";
                 try
@@ -87,6 +65,8 @@ namespace Client_Side
                     ShowMessageInConsole(String.Format("Unable to parse browser for work. Please, read help. \nClient_Side.exe --help"));
                     flag = false;
                     ShowMessageInConsole(ex.ToString());
+                    Logger.WriteLog(ex.Message, "error");
+                    Logger.WriteLog(ex.StackTrace, "message");
                 }
 
                 if (ParseConfigs.ParseConfigFile(path) && flag)
@@ -102,26 +82,30 @@ namespace Client_Side
                     catch (Exception ex)
                     {
                         ShowMessageInConsole(ex.ToString());
+                        Logger.WriteLog(ex.Message, "error");
+                        Logger.WriteLog(ex.StackTrace, "error");
+
                     }
 
                     List<TestAction> Plan = ParsePlan.Plan();
                     ShowMessageInConsole("Test Plan Parsed");
+                    Logger.WriteLog("Test Plan Parsed", "info");
                     
-                    TestThreads Test = new TestThreads(TestActionHelp.GetThreadsCount, Plan, browser);
-                    Test.Start();
+                    TestThreads testThreads = new TestThreads(TestActionHelp.GetThreadsCount, Plan, browser);
+                    testThreads.Start();
                     if (TestActionHelp.GetCheckDuration)
                     {
                         while (DateTime.Now<TestActionHelp.GetEndTime)
                         {
                             Thread.Sleep(60000);
                         }
-                        Test.Abort();
+                        //Test.Abort();
                     }
                     else
                     {
                     notend:
                         Thread.Sleep(60000);
-                        int countOfAbortedThreads = Test.GetStateOfAllThreads().Select(t => t.Value.Equals(ThreadState.Aborted)).Count();
+                        int countOfAbortedThreads = testThreads.GetStateOfAllThreads().Select(t => t.Value.Equals(ThreadState.Aborted)).Count();
                         if (countOfAbortedThreads == TestActionHelp.GetThreadsCount)
                         {
                             goto end;
@@ -135,13 +119,12 @@ namespace Client_Side
                 }
             end:
                 ShowMessageInConsole("Test was ended.");
-                Console.ReadKey();
-                return 0;
             }
             catch (Exception ex)
             {
                 ShowMessageInConsole(ex.ToString());
-                return 1;
+                Logger.WriteLog(ex.Message, "error");
+                Logger.WriteLog(ex.StackTrace, "error");
             }
         }
     }
