@@ -15,7 +15,7 @@ Results/*
 x64/
 build/
 bld/
-[Bb]in/
+[b]in/
 [Oo]bj/
 
 # Roslyn cache directories
