@@ -1,0 +1,33 @@
+TestAction class
+	type - type of command
+	innerText - text of included xml nodes
+	attribute - field for information from undefined attributes
+	name - Name attribute of command
+	measure - attribute which describes a need for measurement for this transaction
+	measureType - attribute which describes type of measurement: stopwatch or navigationTimingAPI
+	text - text attribute of xml node
+	iterations -  field for setting of the count of iterations for cycle command
+	sendInLog - field for setting a need for sending this transaction in log
+
+	waitForXPath - webdriver will wait for the element which is described by XPath
+	waitForClassName - webdriver will wait for the element which is described by ClassName of the element
+	waitForTitle - webdriver will wait for the element which is described by Title of the element
+	waitForTag - webdriver will wait for the element which is described by Tag of the element, should be used with any another type of wait attributes
+	waitForInTag - webdriver will wait for the element which is described by inner tag of the element, should be used with any another type of wait attributes
+	waitForInLabel - webdriver will wait for the element which is described by inner label of the element, should be used with any another type of wait attributes
+	waitForInText - webdriver will wait for the element which is described by innver text of the element, should be used with any another type of wait attributes
+	waitForInValue - webdriver will wait for the element which is described by inner value of the element, should be used with any another type of wait attributes
+	waitForId - webdriver will wait for the element which is described by id of the element
+
+	All attributes described below has the same meaning as above one, but they are using for defenition of the actual object for any manipulations
+	objectXPath
+	objectClassName
+	objectTitle
+	objectTag
+	objectInTag
+	objectInLabel
+	objectInText
+	objectInValue
+	objectId
+	
+	!!!DO NOT USE TAG AND CLASSNAME FOR THE DEFENITION OF ONE OBJECT FOR MANIPULATIONS OR WAITING!!!
