@@ -1,0 +1,15 @@
+<?xml version='1.0'?>
+<Test>  
+	<navigate name="HomePage" measure="true" measureType="Watch" wait="true" waitForTag="span" waitForInText="Log On">https://172.31.56.71:44300/sap/bc/ui5_ui5/ui2/ushell/shells/abap/FioriLaunchpad.html?sap-client=100&amp;sap-language=EN#Shell-home</navigate>
+	<sendKeys name="User" objectTag="input" objectId="USERNAME_FIELD-inner" text="VULASAU">1</sendKeys>
+	<thinkTime>2000</thinkTime>
+	<sendKeys name="Password" objectTag="input" objectId="PASSWORD_FIELD-inner" text="P@ssword2">1</sendKeys>
+	<click name="LogOnClick" measure="true" measureType="Watch" objectTag="span" objectInText="Log On" wait="true" waitForClassName="HPANavigationSegment" waitForInTag="./title" waitForInText="Segmentation">1</click>
+	<thinkTime>25000</thinkTime>
+	<click name="SegmentationClick" measure="true" measureType="Watch" objectClassName="HPANavigationSegment" objectInTag="./title" objectInText="Segmentation">1</click>	
+	<thinkTime>1000</thinkTime>
+	<switchTab>1</switchTab>
+	<wait name="wait" waitForTag="div" waitForInText="All Consumers (B2C)">1</wait>
+	<thinkTime>5000</thinkTime>
+	<moveTo name="Move" objectTag="li" objectTitle="Characteristic: Source system" targetTag="span" targetTitle="All Consumers&#13;&#10;(B2C)">1</moveTo>
+</Test>

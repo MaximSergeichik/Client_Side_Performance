@@ -1,8 +1,0 @@
-<?xml version='1.0'?>
-<Test>
-	<navigate name="HomePage">http://www.mvideo.ru/</navigate>
-	<navigate name="RootCategory">http://www.mvideo.ru/televizory-i-video</navigate>
-	<navigate name="SubCategory">http://www.mvideo.ru/smartfony-i-svyaz/smartfony-205</navigate>
-	<navigate name="Product">http://www.mvideo.ru/products/smartfon-apple-iphone-7-product-red-special-edition-128gb-30027830</navigate>
-</Test>
-	
